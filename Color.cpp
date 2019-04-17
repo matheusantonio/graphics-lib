@@ -15,6 +15,7 @@ Color c_red = {255,0,0};
 Color c_green = {0,255,0};
 Color c_blue = {0,0,255};
 Color c_purple = {255,0,255};
+Color c_white = {255,255,255};
 
 // Retorna um valor no intervalo [a,b]
 float clamp(float v, float a=0, float b=255){
