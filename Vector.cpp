@@ -1,18 +1,12 @@
-#ifndef DEF_VECTOR
-#define DEF_VECTOR
+#include "Vector.h"
+#include <cmath>
 
 // Estrutura para representar um vetor de duas dimensões
-struct vec2{
-    float x, y;
-};
+struct vec2;
 
 // OPERAÇÕES
 // Estrutura para representar um vetor de três dimensões
-struct vec3{
-    float x, y, z;
-};
-
-
+struct vec3;
 
 //==================================
 // PLANO
@@ -139,5 +133,3 @@ vec3 cross(vec3 u, vec3 v){
         u.x*v.y - u.y*v.x
     };
 }
-
-#endif

@@ -1,16 +1,15 @@
-#pragma once
-#ifndef DEF_IMAGE
-#define IMAGEM
-
 #include <iostream>
-#include "Color.cpp"
+#include "Color.h"
+#include "Image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-struct Image{
-    int width, height;
-    Color* data; 
-};
+struct Image;
+
+void flip_image(){
+    stbi_flip_vertically_on_write(1);
+}
+
 
 // Inicializa uma imagem
 Image newImage(int w, int h){
@@ -45,5 +44,3 @@ void savePNG(const char* filename, Image img){
         img.width, img.height, 3,
         img.data, 0);
 }
-
-#endif

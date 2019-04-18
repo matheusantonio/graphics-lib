@@ -1,20 +1,13 @@
-#ifndef DEF_DESENHO
-#define DEF_DESENHO
-
 #include <iostream>
 #include <fstream>
-#include "Color.cpp"
-#include "Vector.cpp"
-#include "Image.cpp"
+#include "Color.h"
+#include "Vector.h"
+#include "Image.h"
+#include "Desenho.h"
 
 using namespace std;
 
 typedef int (*Func)(int, int);
-
-Color C = {255,0,0};
-Color D = {0,255,0};
-Color A = {0,0,255};
-Color B = {255,0,255};
 
 // Desenha um quadrado a partir dos pontos 
 void desenhar_quadrado(Color cor, vec2 Pi, vec2 Pf, int width, int height, Color* data)
@@ -28,7 +21,7 @@ void desenhar_quadrado(Color cor, vec2 Pi, vec2 Pf, int width, int height, Color
 
 // Desenha um tabuleiro de xadrez preto e branco
 void desenhar_xadrez(int width, int height, Color* data){
-    int i=0, j=0;
+    float i=0, j=0;
     int passo=width/8;
     Color cor_da_vez = {0,0,0}, preto = {255,255,255};
     while(i<8*passo){
@@ -57,7 +50,7 @@ void desenhar_interpolacao(int width, int height, Color* data){
     for(int i=0;i<height;i++){
         for(int j=0;j<width;j++){
             float x = (float)j/width, y=(float)(height-i)/height;
-            Color c = bilinear(x, y, c_blue, c_purple, c_red, c_green);
+            Color c = bilinear(x, y, c_blue(), c_purple(), c_red(), c_green());
             data[i*width+j] = c;
         }
     }
@@ -84,7 +77,7 @@ void draw_implicit(Image I, Color color, Func f){
 
 // Desenha uma linha
 void draw_line(Image I, int xi, int yi, int xf, int yf,  Color c){
-    stbi_flip_vertically_on_write(1);
+    flip_image();
     
     //yi = I.height-yi; //a imagem no slide considera y=0 na parte inferior
     //yf = I.height-yf;
@@ -242,7 +235,7 @@ void draw_circle(Image i, int xc, int yc, int R, Color c){
 
 // Desenha um triângulo no plano
 void draw_triangle(Image i, vec2* P, Color c){
-    stbi_flip_vertically_on_write(1);
+    flip_image();
 
     int mx=0, my=0, xm=0, ym=0;
     for(int i=0;i<3;i++){
@@ -291,7 +284,7 @@ void draw_triangle_fan(Image img, vec2* P, int n, Color c){
 
 // VERSÃO USANDO INTERPOLAÇÃO DE CORES
 void draw_triangle(Image i, vec2*P, int n, Color*C){
-    stbi_flip_vertically_on_write(1);
+    flip_image();
 
     int mx=0, my=0, xm=0, ym=0;
     for(int i=0;i<3;i++){
@@ -308,7 +301,7 @@ void draw_triangle(Image i, vec2*P, int n, Color*C){
             if(bari[0] >= 0 && bari[0] <= 1 &&
                bari[1] >= 0 && bari[1] <= 1 &&
                bari[2] >= 0 && bari[2] <= 1){
-                   Color c = bari[0]*C[0] + bari[1]*C[1] + bari[2]*C[2];
+                   Color c = intertri(bari, C[0], C[1], C[2]);
                    draw_pixel(i, x, y, c);
                }
         }
@@ -385,5 +378,3 @@ int lerArquivo(string filename, vec2 * P){
     }
     return 0;
 }
-
-#endif

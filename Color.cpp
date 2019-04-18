@@ -1,21 +1,30 @@
-#ifndef DEF_COLOR
-#define DEF_COLOR
+#include "Color.h"
 
 using namespace std;
 
 typedef unsigned char Byte;
 
 // Estrutura para representar uma cor no padrão RGB
-struct Color
-{
-    Byte r, g, b;
-};
+struct Color;
 
-Color c_red = {255,0,0};
-Color c_green = {0,255,0};
-Color c_blue = {0,0,255};
-Color c_purple = {255,0,255};
-Color c_white = {255,255,255};
+Color c_red() {
+    return {255,0,0};
+} 
+
+Color c_green(){
+    return {0,255,0};
+}
+
+Color c_blue(){
+    return {0,0,255};
+}
+Color c_purple(){
+    return {255,0,255};
+}
+
+Color c_white(){
+    return {255,255,255};
+}
 
 // Retorna um valor no intervalo [a,b]
 float clamp(float v, float a=0, float b=255){
@@ -25,7 +34,7 @@ float clamp(float v, float a=0, float b=255){
         v = b;
 return v;
 }
-
+ 
 // Operação que checa a igualdade de duas cores
 bool operator== (Color a, Color b){
     return ( a.b == b.b && a.g==b.g && a.r==b.r);
@@ -39,14 +48,10 @@ Color operator* (float u, Color A){
     return C;
 }
 
-Color operator+ (Color A, Color B){
-    Color C = {A.r+B.r, A.g+B.g, A.b+B.b};
-}
-
 // 
-string str_color (Color a){
-    return "{" + to_string(a.r) + "," + to_string(a.g) + "," + to_string(a.b) + "}";
-}
+//string str_color (Color a){
+//    return "{" + to_string(a.r) + "," + to_string(a.g) + "," + to_string(a.b) + "}";
+//}
 
 // Interpolacao linear de duas cores A e B
 Color lerp(float t, Color A, Color B){
@@ -65,9 +70,10 @@ Color bilinear(float u, float v, Color A, Color B, Color C, Color D){
     return G;
 }
 
-Color intertri(float r, float s, Color A, Color B, Color C){
-    Color D = lerp(r, A, B);
-    return lerp(s, D, C);
-}
-
-#endif
+Color intertri(float *b, Color A, Color B, Color C){
+    Color D;
+    D.r = b[0]*A.r + b[1]*B.r + b[2]*C.r;
+    D.g = b[0]*A.g + b[1]*B.g + b[2]*C.g;
+    D.b = b[0]*A.b + b[1]*B.b + b[2]*C.b;
+    return D;
+} 

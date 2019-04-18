@@ -1,12 +1,10 @@
-#ifndef DEF_COMPLEX
-#define DEF_COMPLEX
-
 #include <complex>
 #include <stdio.h>
-#include "Vector.cpp"
+#include "Vector.h"
+#include "Complexos.h"
 
-typedef std::complex<float> complex2;
-
+//typedef std::complex<float> complex2;
+ 
 // Converte um vetor P para um vetor complexo 
 complex2 toComplex(vec2 P){
     return {P.x, P.y};
@@ -22,5 +20,3 @@ vec2 operator*(vec2 P, complex2 a){
     complex2 p = toComplex(P);
     return toVec2(p*a);
 }
-
-#endif
