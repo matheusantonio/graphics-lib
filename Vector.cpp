@@ -4,9 +4,11 @@
 // Estrutura para representar um vetor de duas dimensões
 struct vec2;
 
-// OPERAÇÕES
 // Estrutura para representar um vetor de três dimensões
 struct vec3;
+
+// Estrutura para representar quartérnios
+struct Quaternion;
 
 //==================================
 // PLANO
@@ -132,4 +134,37 @@ vec3 cross(vec3 u, vec3 v){
         u.y*v.x - u.x*v.y,
         u.x*v.y - u.y*v.x
     };
+}
+
+// QUARTERNIOS
+// Operação de soma de quartérnios
+Quaternion operator+(Quaternion q1, Quaternion q2){
+    Quaternion q;
+    q.a = q1.a + q2.a;
+    q.b = q1.b + q2.b;
+    q.c = q1.c + q2.c;
+    q.d = q1.d + q2.d;
+    return q;
+}
+
+// Operação de multiplicação de um quatérnio por um escalar
+Quaternion operator*(float alpha, Quaternion q1){
+    Quaternion q;
+    q.a = alpha*q1.a;
+    q.b = alpha*q1.b;
+    q.c = alpha*q1.c;
+    q.d = alpha*q1.d;
+    return q;
+}
+
+// Multiplicação de quaternios
+Quaternion operator*(Quaternion q1, Quaternion q2){
+    Quaternion q;
+
+    q.a = q1.a*q2.a + q1.b*q2.b + q1.c*q2.c + q1.d*q2.d;
+    q.b = q1.a*q2.b + q1.b*q2.a + q1.d*q2.d - q1.d*q2.c;
+    q.c = q1.a*q2.c + q1.c*q2.a - q1.b*q2.d + q1.d*q2.b;
+    q.d = q1.a*q2.d + q1.d*q2.a + q1.b*q2.c - q1.c*q2.b;
+
+    return q;
 }
