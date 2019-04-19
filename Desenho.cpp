@@ -393,3 +393,122 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
     };
     draw_triangle(img, P2, 3, C);
 }
+
+// Desenha uma linha na tela
+void draw_line(Image img, vec4 A, vec4 B, Color color){
+    vec3 v0 = toScreen(img, A);
+    vec3 v1 = toScreen(img, B);
+    cout << "Pontos resultantes: " << endl;
+    cout << v0.x << ", " << v0.y << ", " << v0.z << endl;
+    cout << v1.x << ", " << v1.y << ", " << v1.z << endl;
+    draw_line(img, v0, v1, color);
+}
+
+void draw_lines(Image img, vec4 *P, int n, Color c){
+    for(int i=0;i<n;i+=2){
+        draw_line(img, P[i], P[i+1], c);
+    }
+} 
+
+void draw_line_strip(Image img, vec4 *P, int n, Color c){
+    for(int i=0;i<n-1;i++){
+        draw_line(img, P[i], P[i+1], c);
+    }
+}
+
+void draw_line_loop(Image img, vec4 *P, int n, Color c){
+    for(int i=0;i<n;i++){
+        if(i==n-1){
+            draw_line(img, P[i], P[0], c);    
+        }else{
+            draw_line(img, P[i], P[i+1], c);
+        }
+    }
+}
+
+void draw_elements_lines(Image img, vec4 *P, int* indices, int n, Color c){
+    for(int i=0;i<(n-1);i+=2){
+        //std::cout << "Entrei em: " << P[indices[i]].x << P[indices[i]].y << std::endl;
+        draw_line(img, P[indices[i]], P[indices[i+1]], c);
+    }
+}
+
+void draw_elements_line_strip(Image img, vec4* P, int* indices, int n, Color c){
+    for(int i=0;i<(n-1);i++){
+        draw_line(img, P[indices[i]], P[indices[i+1]], c);
+    }
+} 
+
+void draw_elements_line_loop(Image img, vec4* P, int* indices, int n, Color c){
+    for(int i=0;i<=(n-1);i++){
+        if(i==n-1){
+            draw_line(img, P[indices[i]], P[indices[0]], c);
+        } else{
+            draw_line(img, P[indices[i]], P[indices[i+1]], c);
+        }
+    }
+    
+}
+
+
+// Desenha um triangulo com vertices P (coordenadas normalizadas)
+void draw_triangle(Image img, vec4 P[3], Color C[3]){
+    vec3 P3[] = {
+        toScreen(img, P[0]),
+        toScreen(img, P[1]),
+        toScreen(img, P[2])
+    };
+    draw_triangle(img, P3, C);
+}
+
+
+void draw_triangles(Image img, vec4* P, int n, Color* C){
+    for(int i=0;i<n;i+=3){
+        draw_triangle(img, (P+i), C);
+    }
+} 
+
+void draw_triangle_strip(Image img, vec4* P, int n, Color* C){
+    for(int i=0;i<(n-2); i++){
+        draw_triangle(img, P+i, (C+i));
+    }
+}
+
+void draw_triangle_fan(Image img, vec4* P, int n, Color* C){
+    for(int i=1;i<(n-1);i++){
+        vec4 P2[3] = {
+            P[0],
+            P[i],
+            P[i+1]
+        };
+        Color C2[3] = {
+            C[0],
+            C[i],
+            C[i+1]
+        };
+        draw_triangle(img, P2, C2);
+    } 
+}
+
+void draw_elements_triangles(Image img, vec4* P, int* indices, int n, Color*C){
+    for(int i=0;i<(n-2);i+=3){
+        vec4 P2[3] = {P[indices[i]], P[indices[i+1]], P[indices[i+2]]};
+        Color C2[3] = {C[indices[i]], C[indices[i+1]], C[indices[i+2]]};
+        draw_triangle(img, P2, C2);
+    }
+}
+void draw_elements_triangle_strip(Image img, vec4* P, int* indices, int n, Color* C){
+    for(int i=0;i<(n-2); i++){
+        vec4 P2[3] = {P[indices[i]], P[indices[i+1]], P[indices[i+2]]};
+        Color C2[3] = {C[indices[i]], C[indices[i+1]], C[indices[i+2]]};
+        draw_triangle(img, P+i, (C+i));
+    }
+}
+
+void draw_elements_triangle_fan(Image img, vec4* P, int* indices, int n, Color* C){
+    for(int i=1;i<(n-1);i++){
+        vec4 P2[3] = {P[indices[0]], P[indices[i+1]], P[indices[i+2]]};
+        Color C2[3] = {C[indices[0]], C[indices[i+1]], C[indices[i+2]]};
+        draw_triangle(img, P2, C2);
+    } 
+}

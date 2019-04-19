@@ -74,4 +74,40 @@ void draw_bezier_spline(Image img, vec2* P, int n, Color c);
 // tem algum problema nessa função que preciso identificar
 int lerArquivo(string filename, vec2 * P);
 
+// draw line para vec3
+void draw_line(Image img, vec3 A, vec3 B, Color C);
+
+// draw triangle para vec3
+void draw_triangle(Image img, vec3 P[3], Color C[3]);
+
+// Desenha uma linha na tela
+void draw_line(Image img, vec4 A, vec4 B, Color color);
+
+void draw_lines(Image img, vec4 *P, int n, Color c);
+
+void draw_line_strip(Image img, vec4 *P, int n, Color c);
+
+void draw_line_loop(Image img, vec4 *P, int n, Color c);
+
+void draw_elements_lines(Image img, vec4 *P, int* indices, int n, Color c);
+
+void draw_elements_line_strip(Image img, vec4* P, int* indices, int n, Color c);
+
+void draw_elements_line_loop(Image img, vec4* P, int* indices, int n, Color c);
+
+// Desenha um triangulo com vertices P (coordenadas normalizadas)
+void draw_triangle(Image img, vec4 P[3], Color C[3]);
+
+void draw_triangles(Image img, vec4* P, int n, Color* C);
+
+void draw_triangle_strip(Image img, vec4* P, int n, Color* C);
+
+void draw_triangle_fan(Image img, vec4* P, int n, Color* C);
+
+void draw_elements_triangles(Image img, vec4* P, int* indices, int n, Color*C);
+
+void draw_elements_triangle_strip(Image img, vec4* P, int* indices, int n, Color* C);
+
+void draw_elements_triangle_fan(Image img, vec4* P, int* indices, int n, Color* C);
+
 #endif

@@ -1,6 +1,8 @@
 #ifndef DEF_VECTOR
 #define DEF_VECTOR
 
+#include "Image.h"
+
 // Estrutura para representar um vetor de duas dimensões
 struct vec2{
     float x, y;
@@ -133,5 +135,9 @@ vec4 operator* (mat4 A, vec4 u);
 
 // Multiplicação de vários vetores de 4 dimensões por uma matriz m4
 void multMV4(mat4 M, vec4 P[], int n, vec4 R[]);
+
+mat4 orthogonal(float l, float r, float b, float t, float n, float f);
+
+vec3 toScreen(Image img, vec4 P);
 
 #endif

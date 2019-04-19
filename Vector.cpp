@@ -1,4 +1,5 @@
 #include "Vector.h"
+#include "Image.h"
 #include <cmath>
 
 // Estrutura para representar um vetor de duas dimensões
@@ -209,7 +210,7 @@ mat4 operator*(mat4 A, mat4 B){
 // Translação usando matrizes de 4 dimensões
 mat4 translate(float a, float b, float c){
     mat4 T;
-    for(int i=0;i<3;i++){
+    for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
             if(i==j) T.M[i][j] = 1;
             else T.M[i][j] = 0;
@@ -297,3 +298,20 @@ void multMV4(mat4 M, vec4 P[], int n, vec4 R[]){
         R[i] = M*P[i];
     }
 } // R[i] = M*P[i] para cada i de 0 a 19
+
+
+mat4 orthogonal(float l, float r, float b, float t, float n, float f){
+    float MR[4][4] = {
+        {2/(r-l), 0, 0, -(r+l)/(r-l)},
+        {0, 2/(t-b), 0, -(t+b)/(t-b)},
+        {0, 0, 2/(n-f), -(n+f)/(n-f)}
+    };
+    return rotate(MR);
+}
+
+vec3 toScreen(Image img, vec4 P){
+    vec3 v = vec4to3(P);
+    v.x = ((v.x+1)*img.width - 1)/2;
+    v.y = ((v.y+1)*img.height - 1)/2;
+    return v;
+}
