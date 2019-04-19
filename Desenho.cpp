@@ -378,3 +378,18 @@ int lerArquivo(string filename, vec2 * P){
     }
     return 0;
 }
+
+// draw line para vec3
+void draw_line(Image img, vec3 A, vec3 B, Color C){
+    draw_line(img, A.x, A.y, B.x, B.y, C);
+}
+
+// draw triangle para vec3
+void draw_triangle(Image img, vec3 P[3], Color C[3]){
+    vec2 P2[] = {
+        {P[0].x, P[0].y},
+        {P[1].x, P[1].y},
+        {P[2].x, P[2].y}
+    };
+    draw_triangle(img, P2, 3, C);
+}

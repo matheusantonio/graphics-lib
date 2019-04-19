@@ -16,6 +16,15 @@ struct Quaternion{
     float a, b, c, d;
 };
 
+struct vec4{
+    float x, y, z, w;
+};
+
+// Estrutura para representar matriz de quatro dimensões
+struct mat4{
+    float M[4][4];
+};
+
 //==================================
 // PLANO
 
@@ -85,5 +94,44 @@ Quaternion operator+(Quaternion q1, Quaternion q2);
 
 // Operação de multiplicação de um quartérnio por um escalar
 Quaternion operator*(float alpha, Quaternion q1);
+
+
+// VETORES 3D COM REFERENCIAL (VEC4)
+// Soma de vec4
+vec4 operator+(vec4 u, vec4 v);
+
+// multiplicação por escalar de vec4
+vec4 operator*(float a, vec4 v);
+
+// Conversão de vec4 para vec3
+vec3 vec4to3(vec4 u);
+
+// MATRIZ DE QUATRO DIMENSÕES
+// Multiplicação de matrizes de 4 dimensões
+mat4 operator*(mat4 A, mat4 B);
+
+// Translação usando matrizes de 4 dimensões
+mat4 translate(float a, float b, float c);
+
+// Gera matriz de escala m4
+mat4 scale(float a, float b, float c);
+
+// Gera matriz m4 a partir da matriz dada
+mat4 rotate(float MR[4][4]);
+
+// Matriz de rotação em torno do eixo X
+mat4 rotate_x(float t);
+
+// Matriz de rotação em torno do eixo Y
+mat4 rotate_y(float t);
+
+// Matriz de rotação em torno do eixo Z
+mat4 rotate_z(float t);
+
+// Multiplicação de um vetor vec4 por uma matriz m4
+vec4 operator* (mat4 A, vec4 u);
+
+// Multiplicação de vários vetores de 4 dimensões por uma matriz m4
+void multMV4(mat4 M, vec4 P[], int n, vec4 R[]);
 
 #endif

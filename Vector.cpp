@@ -10,6 +10,11 @@ struct vec3;
 // Estrutura para representar quartérnios
 struct Quaternion;
 
+struct vec4;
+
+// Estrutura para representar matriz de quatro dimensões
+struct mat4;
+
 //==================================
 // PLANO
 
@@ -168,3 +173,127 @@ Quaternion operator*(Quaternion q1, Quaternion q2){
 
     return q;
 }
+
+// VETORES 3D COM REFERENCIAL (VEC4)
+// Soma de vec4
+vec4 operator+(vec4 u, vec4 v){
+    return {u.x + v.x, u.y + v.y, u.z + v.z, u.w + v.w};
+}
+
+// multiplicação por escalar de vec4
+vec4 operator*(float a, vec4 v){
+    return {a*v.x, a*v.y, a*v.z, a*v.w};
+}
+
+// Conversão de vec4 para vec3
+vec3 vec4to3(vec4 u){
+    return {u.x/u.w, u.y/u.w, u.z/u.w};
+}
+
+// MATRIZ DE QUATRO DIMENSÕES
+// Multiplicação de matrizes de 4 dimensões
+mat4 operator*(mat4 A, mat4 B){
+    mat4 C;
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){
+            float s = 0;
+            for(int k=0;k<4;k++){
+                s+= A.M[i][j]*B.M[k][j];
+            }
+            C.M[i][j] = s;
+        }
+    }
+    return C;
+}
+
+// Translação usando matrizes de 4 dimensões
+mat4 translate(float a, float b, float c){
+    mat4 T;
+    for(int i=0;i<3;i++){
+        for(int j=0;j<4;j++){
+            if(i==j) T.M[i][j] = 1;
+            else T.M[i][j] = 0;
+        }
+    }
+    T.M[4][0] = a;
+    T.M[4][1] = b;
+    T.M[4][2] = c;
+    T.M[4][3] = 1;
+    return T;
+}
+
+// Gera matriz de escala m4
+mat4 scale(float a, float b, float c){
+    mat4 T;
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){
+            if(i!=j) T.M[i][j] = 0;
+        }
+    }
+    T.M[0][0] = a;
+    T.M[1][1] = b;
+    T.M[2][2] = c;
+    T.M[3][3] = 1;
+    return T;
+}
+
+// Gera matriz m4 a partir da matriz dada
+mat4 rotate(float MR[4][4]){
+    mat4 R;
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){
+            R.M[i][j] = MR[i][j];
+        }
+    }
+    return R;
+}
+
+// Matriz de rotação em torno do eixo X
+mat4 rotate_x(float t){
+    float MR[4][4] = {
+        {1, 0, 0, 0},
+        {0, cos(t), -sin(t), 0},
+        {0, sin(t), cos(t), 0},
+        {0, 0, 0, 1}
+    };
+    return rotate(MR);
+}
+
+// Matriz de rotação em torno do eixo Y
+mat4 rotate_y(float t){
+    float MR[4][4] = {
+        {cos(t), 0, sin(t), 0},
+        {0, 1, 0, 0},
+        { -sin(t), 0, cos(t), 0},
+        {0, 0, 0, 1}
+    };
+    return rotate(MR);
+}
+
+// Matriz de rotação em torno do eixo Z
+mat4 rotate_z(float t){
+    float MR[4][4] = {
+        {cos(t), -sin(t), 0, 0},
+        {sin(t), cos(t), 0, 0},
+        { 0, 0, 1, 0},
+        {0, 0, 0, 1}
+    };
+    return rotate(MR);
+}
+
+// Multiplicação de um vetor vec4 por uma matriz m4
+vec4 operator* (mat4 A, vec4 u){
+    vec4 v;
+    v.x = {A.M[0][0]*u.x + A.M[0][1]*u.y + A.M[0][2]*u.z + A.M[0][3]*u.w};
+    v.x = {A.M[1][0]*u.x + A.M[1][1]*u.y + A.M[1][2]*u.z + A.M[1][3]*u.w};
+    v.x = {A.M[2][0]*u.x + A.M[2][1]*u.y + A.M[2][2]*u.z + A.M[2][3]*u.w};
+    v.x = {A.M[3][0]*u.x + A.M[3][1]*u.y + A.M[3][2]*u.z + A.M[3][3]*u.w};
+    return v;
+}
+
+// Multiplicação de vários vetores de 4 dimensões por uma matriz m4
+void multMV4(mat4 M, vec4 P[], int n, vec4 R[]){
+    for(int i=0;i<n;i++){
+        R[i] = M*P[i];
+    }
+} // R[i] = M*P[i] para cada i de 0 a 19
