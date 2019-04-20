@@ -7,16 +7,6 @@
 
 using namespace std;
 
-void print_matrix(mat4 M){
-    for(int i=0;i<4;i++){
-        for(int j=0;j<4;j++){
-            cout << M.M[i][j] << ", " << ends;
-        }
-        cout << endl;
-    }
-    cout << endl;
-}
-
 int main()
 {
     Image Img = newImage(1000,1000);
@@ -44,24 +34,8 @@ int main()
     vec4 MP[8];
     multMV4(M, P, 8, MP);
 
-    cout<< "Matrizes: "<< endl;
-    print_matrix(Model);
-    print_matrix(View);
-    print_matrix(Projection);
-    print_matrix(M);
-    
-    cout << "vec4 resultante: " << endl;
-    for(int i=0;i<8;i++){
-        cout << MP[i].x << ", " << MP[i].y << ", " << MP[i].z << ", " << MP[i].w << endl;
-    }
-
     draw_elements_lines(Img, MP, indices, 24, c_blue());
     
-
-    //vec4 MP[8];
-    //multMV4(M, P, 8, MP);
-    //draw_elements_lines(Img, MP, indices, 24, c_blue());    
-
     savePNG("figuras/cubo_3d.png", Img);
     freeImage(Img);
 

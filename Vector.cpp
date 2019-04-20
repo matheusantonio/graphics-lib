@@ -1,6 +1,7 @@
 #include "Vector.h"
 #include "Image.h"
 #include <cmath>
+#include <iostream>
 
 // Estrutura para representar um vetor de duas dimensões
 struct vec2;
@@ -199,7 +200,7 @@ mat4 operator*(mat4 A, mat4 B){
         for(int j=0;j<4;j++){
             float s = 0;
             for(int k=0;k<4;k++){
-                s+= A.M[i][j]*B.M[k][j];
+                s+= A.M[i][j]*B.M[i][k];
             }
             C.M[i][j] = s;
         }
@@ -216,10 +217,10 @@ mat4 translate(float a, float b, float c){
             else T.M[i][j] = 0;
         }
     }
-    T.M[4][0] = a;
-    T.M[4][1] = b;
-    T.M[4][2] = c;
-    T.M[4][3] = 1;
+    T.M[0][3] = a;
+    T.M[1][3] = b;
+    T.M[2][3] = c;
+    T.M[3][3] = 1;
     return T;
 }
 
@@ -285,10 +286,10 @@ mat4 rotate_z(float t){
 // Multiplicação de um vetor vec4 por uma matriz m4
 vec4 operator* (mat4 A, vec4 u){
     vec4 v;
-    v.x = {A.M[0][0]*u.x + A.M[0][1]*u.y + A.M[0][2]*u.z + A.M[0][3]*u.w};
-    v.x = {A.M[1][0]*u.x + A.M[1][1]*u.y + A.M[1][2]*u.z + A.M[1][3]*u.w};
-    v.x = {A.M[2][0]*u.x + A.M[2][1]*u.y + A.M[2][2]*u.z + A.M[2][3]*u.w};
-    v.x = {A.M[3][0]*u.x + A.M[3][1]*u.y + A.M[3][2]*u.z + A.M[3][3]*u.w};
+    v.x = {A.M[0][0]*u.x + A.M[1][0]*u.y + A.M[2][0]*u.z + A.M[3][0]*u.w};
+    v.y = {A.M[0][1]*u.x + A.M[1][1]*u.y + A.M[2][1]*u.z + A.M[3][1]*u.w};
+    v.z = {A.M[0][2]*u.x + A.M[1][2]*u.y + A.M[2][2]*u.z + A.M[3][2]*u.w};
+    v.w = {A.M[0][3]*u.x + A.M[1][3]*u.y + A.M[2][3]*u.z + A.M[3][3]*u.w};
     return v;
 }
 
@@ -302,9 +303,10 @@ void multMV4(mat4 M, vec4 P[], int n, vec4 R[]){
 
 mat4 orthogonal(float l, float r, float b, float t, float n, float f){
     float MR[4][4] = {
-        {2/(r-l), 0, 0, -(r+l)/(r-l)},
-        {0, 2/(t-b), 0, -(t+b)/(t-b)},
-        {0, 0, 2/(n-f), -(n+f)/(n-f)}
+        {2/(r-l), 0, 0, -1*(r+l)/(r-l)},
+        {0, 2/(t-b), 0, -1*(t+b)/(t-b)},
+        {0, 0, 2/(n-f), -1*(n+f)/(n-f)},
+        {0,0,0,1}
     };
     return rotate(MR);
 }

@@ -398,9 +398,6 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
 void draw_line(Image img, vec4 A, vec4 B, Color color){
     vec3 v0 = toScreen(img, A);
     vec3 v1 = toScreen(img, B);
-    cout << "Pontos resultantes: " << endl;
-    cout << v0.x << ", " << v0.y << ", " << v0.z << endl;
-    cout << v1.x << ", " << v1.y << ", " << v1.z << endl;
     draw_line(img, v0, v1, color);
 }
 
@@ -428,7 +425,6 @@ void draw_line_loop(Image img, vec4 *P, int n, Color c){
 
 void draw_elements_lines(Image img, vec4 *P, int* indices, int n, Color c){
     for(int i=0;i<(n-1);i+=2){
-        //std::cout << "Entrei em: " << P[indices[i]].x << P[indices[i]].y << std::endl;
         draw_line(img, P[indices[i]], P[indices[i+1]], c);
     }
 }
