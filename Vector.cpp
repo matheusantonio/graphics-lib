@@ -312,6 +312,16 @@ mat4 orthogonal(float l, float r, float b, float t, float n, float f){
     return rotate(MR);
 }
 
+mat4 frustum(float l, float r, float b, float t, float n, float f){
+    float MR[4][4] = {
+        {-2*n/(r-l), 0, (r+l)/(r-l), 0},
+        {0, -2*n/(t-b), (t+b)/(t-b), 0},
+        {0, 0, (f+n)/(f-n), 2*n*f/(n-f)},
+        {0, 0, -1, 0}
+    };
+    return rotate(MR);
+}
+
 vec3 toScreen(Image img, vec4 P){
     vec3 v = vec4to3(P);
     v.x = ((v.x+1)*img.width - 1)/2;

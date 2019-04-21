@@ -26,7 +26,7 @@ int main()
     // View Matrix
     mat4 View = translate(0, 0, -2);
     // Projection Matrix:
-    mat4 Projection = orthogonal(-2,2, -2,2, -2,2);
+    mat4 Projection = frustum(-2,2, -2,2, -2,-4);
     // MVP Matrix
     mat4 M = Projection*View*Model;
     vec4 MP[8];

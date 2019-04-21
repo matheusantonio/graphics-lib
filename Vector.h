@@ -138,6 +138,8 @@ void multMV4(mat4 M, vec4 P[], int n, vec4 R[]);
 
 mat4 orthogonal(float l, float r, float b, float t, float n, float f);
 
+mat4 frustum(float l, float r, float b, float t, float n, float f);
+
 vec3 toScreen(Image img, vec4 P);
 
 #endif
