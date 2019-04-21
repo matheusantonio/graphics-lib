@@ -5,8 +5,6 @@
 #include "Image.h"
 #include "Complexos.h"
 
-using namespace std;
-
 int main()
 {
     Image Img = newImage(1000,1000);
@@ -35,7 +33,7 @@ int main()
     multMV4(M, P, 8, MP);
 
     draw_elements_lines(Img, MP, indices, 24, c_blue());
-    
+
     savePNG("figuras/cubo_3d.png", Img);
     freeImage(Img);
 

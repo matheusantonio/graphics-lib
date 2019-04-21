@@ -200,11 +200,12 @@ mat4 operator*(mat4 A, mat4 B){
         for(int j=0;j<4;j++){
             float s = 0;
             for(int k=0;k<4;k++){
-                s+= A.M[i][j]*B.M[i][k];
+                s+= A.M[i][k]*B.M[k][j];
             }
             C.M[i][j] = s;
         }
     }
+
     return C;
 }
 
