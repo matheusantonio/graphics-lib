@@ -190,6 +190,7 @@ vec4 operator*(float a, vec4 v){
 // Conversão de vec4 para vec3
 vec3 vec4to3(vec4 u){
     return {u.x/u.w, u.y/u.w, u.z/u.w};
+    //return {u.x, u.y, u.z};
 }
 
 // MATRIZ DE QUATRO DIMENSÕES
@@ -321,6 +322,24 @@ mat4 frustum(float l, float r, float b, float t, float n, float f){
     };
     return rotate(MR);
 }
+
+mat4 lookAt(vec3 O, vec3 C, vec3 Up){
+    vec3 f = normalize(C-O);
+    vec3 s = normalize(cross(f, Up));
+    vec3 u = cross(s, f);
+
+    mat4 A = { s.x, s.y, s.z, 0 , u.x, u.y, u.z, 0, -1*f.x, -1*f.y, -1*f.z, 0, 0, 0, 0, 1};
+    mat4 B = {1, 0, 0, -1*O.x, 0, 1, 0, -1*O.y, 0, 0, 1, -1*O.z, 0, 0, 0, 1};
+    
+    return A*B;
+}
+
+mat4 perspective(float teta, float a, float n, float f){
+    float t = n*tan(teta/2);
+    float r = t*a;
+    return frustum(-1*r, r, -1*t, t, n, f);
+}
+
 
 vec3 toScreen(Image img, vec4 P){
     vec3 v = vec4to3(P);

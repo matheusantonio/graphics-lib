@@ -24,17 +24,24 @@ int main()
     // Model Matrix
     mat4 Model = rotate_y(0.2)*rotate_x(0.1)*translate(-0.5, -0.5, -0.5);
     // View Matrix
-    mat4 View = translate(0, 0, -2);
+    //mat4 View = translate(0, 0, -2);
+    mat4 View = lookAt({1,3,2}, {0,0,0}, {0,2,0});
     // Projection Matrix:
-    mat4 Projection = frustum(-2,2, -2,2, -2,-4);
+    //mat4 Projection = frustum(-2,2, -2,2, -2,-4);
+    mat4 Projection = perspective(45,Img.width/(float)Img.height , 0.1, 10);
+    //mat4 Projection = orthogonal(-2, 2, -2, 2, -2, 2);
     // MVP Matrix
     mat4 M = Projection*View*Model;
     vec4 MP[8];
     multMV4(M, P, 8, MP);
 
+    for(int i =0;i<8;i++){
+        //cout << MP[i].x << ", " << MP[i].y << ", " << MP[i].z << ", " << MP[i].w << endl;
+    }
+
     draw_elements_lines(Img, MP, indices, 24, c_blue());
 
-    savePNG("figuras/cubo_3d.png", Img);
+    savePNG("figuras/cubo_3d_frust.png", Img);
     freeImage(Img);
 
     return 0;

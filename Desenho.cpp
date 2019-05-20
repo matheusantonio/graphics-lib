@@ -79,11 +79,8 @@ void draw_implicit(Image I, Color color, Func f){
 void draw_line(Image I, int xi, int yi, int xf, int yf,  Color c){
     flip_image();
     
-    //yi = I.height-yi; //a imagem no slide considera y=0 na parte inferior
-    //yf = I.height-yf;
-    
-    //Verificar se esses casos sao necessários ou se o caso geral os cobre
-    /*if(yi==yf){
+    //Verificar se esses casos triviais sao necessários ou se o caso geral os cobre
+    if(yi==yf){
         int xa = (xi < xf) ? xi : xf;
         int xb = (xi > xf) ? xi : xf;
         for(int x = xa; x<xb;x++){
@@ -107,30 +104,30 @@ void draw_line(Image I, int xi, int yi, int xf, int yf,  Color c){
         for(int x=xa;x<xb;x++, y++){
             draw_pixel(I, x, y, c);
         }
-    } else{*/
-        int dx = xf-xi, dy=yf-yi; //-10, -140
-        int edx = dx>0?dx:dx*-1; //10
-        int edy = dy>0?dy:dy*-1; //140   o erro pode ficar negativo e y nunca vai incrementar ou decrementar
+    } else{
+        int dx = xf-xi, dy=yf-yi;
+        int edx = dx>0?dx:dx*-1; 
+        int edy = dy>0?dy:dy*-1; //o erro pode ficar negativo e y nunca vai incrementar ou decrementar
         int erro = 0;
         
         if(edx > edy){
-            int y = yi; //y=440
+            int y = yi;
             if(dx>=0){
                 for(int x=xi; x<=xf; x++){
                     draw_pixel(I, x, y, c);
                     erro = erro+2*edy;
                     if(erro > dx){
                         erro = erro-2*edx;
-                        y=(dy>0)?y+1:y-1; //um teste com y decrementando
+                        y=(dy>0)?y+1:y-1; 
                     }
                 }
             } else {
-                for(int x=xi; x>=xf; x--){ // x de 80 a 70
+                for(int x=xi; x>=xf; x--){ 
                     draw_pixel(I, x, y, c);
-                    erro = erro+2*edy; //280
+                    erro = erro+2*edy;
                     if(erro > dx){
-                        erro = erro-2*edx; //260
-                        y=(dy>0)?y+1:y-1; //um teste com y decrementando
+                        erro = erro-2*edx;
+                        y=(dy>0)?y+1:y-1;
                     }
                 }
             }
@@ -146,17 +143,17 @@ void draw_line(Image I, int xi, int yi, int xf, int yf,  Color c){
                     }
                 }
             } else {
-                for(int y=yi; y>=yf; y--){ // x de 80 a 70
+                for(int y=yi; y>=yf; y--){ 
                     draw_pixel(I, x, y, c);
-                    erro = erro+2*edx; //280
+                    erro = erro+2*edx;
                     if(erro > dy){
-                        erro = erro-2*edy; //260
-                        x=(dx>0)?x+1:x-1; //um teste com y decrementando
+                        erro = erro-2*edy;
+                        x=(dx>0)?x+1:x-1; 
                     }
                 }
             }
         }        
-    //}
+    }
 }
 
 // Desenha uma sequência de linhas no plano

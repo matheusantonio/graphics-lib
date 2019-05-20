@@ -138,7 +138,14 @@ void multMV4(mat4 M, vec4 P[], int n, vec4 R[]);
 
 mat4 orthogonal(float l, float r, float b, float t, float n, float f);
 
+// Gera o volume de frustum
 mat4 frustum(float l, float r, float b, float t, float n, float f);
+
+// Define a matriz view através do ponto de visão do observador dado
+mat4 lookAt(vec3 O, vec3 C, vec3 Up);
+
+// Define o volume de frustum a partir da perspectiva dada
+mat4 perspective(float teta, float a, float n, float f);
 
 vec3 toScreen(Image img, vec4 P);
 

@@ -13,4 +13,6 @@ vec2 toVec2(complex2 c);
 // Multiplicação de um vetor P por um complexo a
 vec2 operator*(vec2 P, complex2 a);
 
+complex2 operator*(double t, complex2 a);
+
 #endif
