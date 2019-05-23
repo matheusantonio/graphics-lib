@@ -75,10 +75,58 @@ void draw_implicit(Image I, Color color, Func f){
     }
 }
 
+vec2 recorte(vec2 Li, vec2 Lf, vec2 Pi, vec2 Pf, int token){
+
+    vec2 Pr;
+
+    if(token==-1){
+        float p1 = -1*(Pf.x - Pi.x);
+        float p3 = -1*(Pf.y-Pi.y);
+        float q1 = Pi.x - Li.x;
+        float q3 = Pi.y - Li.y;
+        if(p1==0&&q1<0 || p3==0&&q3<0) return {0,0};
+
+        float t1 = q1/p1;
+        float t3 =q3/p3;
+
+        if(p1<0) Pr.x = (1-t1)*Pi.x+t1*Pf.x;
+        if(p3<0) Pr.y = (1-t3)*Pf.y+t3*Pf.y;
+
+
+    }
+    else if(token==1){
+        float p2 = (Pf.x - Pi.x);
+        float p4 = (Pf.y-Pi.y);
+        float q2 = Lf.x - Pi.x;
+        float q4 = Lf.y - Pi.y;
+        if(p2==0&&q2<0 || p4==0&&q4<0) return {0,0};
+
+        float t2 = q2/p2;
+        float t4 = q4/t4;
+
+
+        if(p2>0) Pr.x = (1-t2)*Pi.x+t2*Pf.x;
+        if(p4>0) Pr.y = (1-t4)*Pi.x+t4*Pf.y;
+    }
+
+    return Pr;
+}
+
+
 // Desenha uma linha
-void draw_line(Image I, int xi, int yi, int xf, int yf,  Color c){
+void draw_line(Image I, float xi, float yi, float xf, float yf,  Color c){
     flip_image();
     
+    // Fazer recorte aqui
+    vec2 P1 = recorte({100,100}, {400,400}, {xi,yi}, {xf,yf}, -1);
+    vec2 P2 = recorte({100,100}, {400,400}, {xi,yi}, {xf,yf}, 1);
+
+    xi = P1.x;
+    xf = P2.x;
+    yi = P1.y;
+    yf = P2.y;
+
+    //======================
     //Verificar se esses casos triviais sao necessários ou se o caso geral os cobre
     if(yi==yf){
         int xa = (xi < xf) ? xi : xf;

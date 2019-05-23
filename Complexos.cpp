@@ -21,6 +21,6 @@ vec2 operator*(vec2 P, complex2 a){
     return toVec2(p*a);
 }
 
-complex2 operator*(double t, complex2 a){
+complex2 operator*(float t, complex2 a){
     return {a.real()*t, a.imag()*t};
 }
