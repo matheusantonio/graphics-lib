@@ -118,9 +118,6 @@ mat4 translate(float a, float b, float c);
 // Gera matriz de escala m4
 mat4 scale(float a, float b, float c);
 
-// Gera matriz m4 a partir da matriz dada
-mat4 rotate(float MR[4][4]);
-
 // Matriz de rotação em torno do eixo X
 mat4 rotate_x(float t);
 

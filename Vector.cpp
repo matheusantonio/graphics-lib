@@ -241,57 +241,43 @@ mat4 scale(float a, float b, float c){
     return T;
 }
 
-// Gera matriz m4 a partir da matriz dada
-mat4 rotate(float MR[4][4]){
-    mat4 R;
-    for(int i=0;i<4;i++){
-        for(int j=0;j<4;j++){
-            R.M[i][j] = MR[i][j];
-        }
-    }
-    return R;
-}
-
 // Matriz de rotação em torno do eixo X
 mat4 rotate_x(float t){
-    float MR[4][4] = {
+    return {{
         {1, 0, 0, 0},
         {0, cos(t), -sin(t), 0},
         {0, sin(t), cos(t), 0},
         {0, 0, 0, 1}
-    };
-    return rotate(MR);
+    }};
 }
 
 // Matriz de rotação em torno do eixo Y
 mat4 rotate_y(float t){
-    float MR[4][4] = {
+    return {{
         {cos(t), 0, sin(t), 0},
         {0, 1, 0, 0},
         { -sin(t), 0, cos(t), 0},
         {0, 0, 0, 1}
-    };
-    return rotate(MR);
+    }};
 }
 
 // Matriz de rotação em torno do eixo Z
 mat4 rotate_z(float t){
-    float MR[4][4] = {
+    return {{
         {cos(t), -sin(t), 0, 0},
         {sin(t), cos(t), 0, 0},
         { 0, 0, 1, 0},
         {0, 0, 0, 1}
-    };
-    return rotate(MR);
+    }};
 }
 
 // Multiplicação de um vetor vec4 por uma matriz m4
 vec4 operator* (mat4 A, vec4 u){
     vec4 v;
-    v.x = {A.M[0][0]*u.x + A.M[1][0]*u.y + A.M[2][0]*u.z + A.M[3][0]*u.w};
-    v.y = {A.M[0][1]*u.x + A.M[1][1]*u.y + A.M[2][1]*u.z + A.M[3][1]*u.w};
-    v.z = {A.M[0][2]*u.x + A.M[1][2]*u.y + A.M[2][2]*u.z + A.M[3][2]*u.w};
-    v.w = {A.M[0][3]*u.x + A.M[1][3]*u.y + A.M[2][3]*u.z + A.M[3][3]*u.w};
+    v.x = {A.M[0][0]*u.x + A.M[0][1]*u.y + A.M[0][2]*u.z + A.M[0][3]*u.w};
+    v.y = {A.M[1][0]*u.x + A.M[1][1]*u.y + A.M[1][2]*u.z + A.M[1][3]*u.w};
+    v.z = {A.M[2][0]*u.x + A.M[2][1]*u.y + A.M[2][2]*u.z + A.M[2][3]*u.w};
+    v.w = {A.M[3][0]*u.x + A.M[3][1]*u.y + A.M[3][2]*u.z + A.M[3][3]*u.w};
     return v;
 }
 
@@ -304,23 +290,23 @@ void multMV4(mat4 M, vec4 P[], int n, vec4 R[]){
 
 
 mat4 orthogonal(float l, float r, float b, float t, float n, float f){
-    float MR[4][4] = {
+    return {{
         {2/(r-l), 0, 0, -1*(r+l)/(r-l)},
         {0, 2/(t-b), 0, -1*(t+b)/(t-b)},
         {0, 0, 2/(n-f), -1*(n+f)/(n-f)},
         {0,0,0,1}
-    };
-    return rotate(MR);
+    }};
 }
 
 mat4 frustum(float l, float r, float b, float t, float n, float f){
-    float MR[4][4] = {
+    //float MR[4][4] = {
+    return {{
         {-2*n/(r-l), 0, (r+l)/(r-l), 0},
         {0, -2*n/(t-b), (t+b)/(t-b), 0},
         {0, 0, (f+n)/(f-n), 2*n*f/(n-f)},
         {0, 0, -1, 0}
-    };
-    return rotate(MR);
+    }};
+    //return rotate(MR);
 }
 
 mat4 lookAt(vec3 O, vec3 C, vec3 Up){
