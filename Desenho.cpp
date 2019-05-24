@@ -10,8 +10,7 @@ using namespace std;
 typedef int (*Func)(int, int);
 
 // Desenha um quadrado a partir dos pontos 
-void desenhar_quadrado(Color cor, vec2 Pi, vec2 Pf, int width, int height, Color* data)
-{
+void desenhar_quadrado(Color cor, vec2 Pi, vec2 Pf, int width, int height, Color* data){
     for(int i = Pi.x; i<Pf.x ; i++){
         for(int j=Pi.y; j<Pf.y; j++){
             data[i*width + j] = cor;
@@ -75,48 +74,11 @@ void draw_implicit(Image I, Color color, Func f){
     }
 }
 
-vec2 recorte(vec2 Li, vec2 Lf, vec2 Pi, vec2 Pf, int token){
-
-    vec2 Pr;
-
-    if(token==-1){
-        float p1 = -1*(Pf.x - Pi.x);
-        float p3 = -1*(Pf.y-Pi.y);
-        float q1 = Pi.x - Li.x;
-        float q3 = Pi.y - Li.y;
-        if(p1==0&&q1<0 || p3==0&&q3<0) return {0,0};
-
-        float t1 = q1/p1;
-        float t3 =q3/p3;
-
-        if(p1<0) Pr.x = (1-t1)*Pi.x+t1*Pf.x;
-        if(p3<0) Pr.y = (1-t3)*Pf.y+t3*Pf.y;
-
-
-    }
-    else if(token==1){
-        float p2 = (Pf.x - Pi.x);
-        float p4 = (Pf.y-Pi.y);
-        float q2 = Lf.x - Pi.x;
-        float q4 = Lf.y - Pi.y;
-        if(p2==0&&q2<0 || p4==0&&q4<0) return {0,0};
-
-        float t2 = q2/p2;
-        float t4 = q4/t4;
-
-
-        if(p2>0) Pr.x = (1-t2)*Pi.x+t2*Pf.x;
-        if(p4>0) Pr.y = (1-t4)*Pi.x+t4*Pf.y;
-    }
-
-    return Pr;
-}
-
-
 // Desenha uma linha
 void draw_line(Image I, float xi, float yi, float xf, float yf,  Color c){
     flip_image();
     
+    // Como definir o valor do recorte?
     vec2 Li = {0,0};
     vec2 Lf = {I.width,I.height};
 
@@ -458,25 +420,6 @@ void draw_bezier_spline(Image img, vec2* P, int n, Color c){
     }
 }
 
-// tem algum problema nessa função que preciso identificar
-int lerArquivo(string filename, vec2 * P){
-    ifstream is(filename);
-    if(is){
-        int n, i=0;
-        is >> n;
-        P=(vec2*)malloc(sizeof(vec2));
-        while(i<n){
-            float x, y;
-            is>>x;
-            is>>y;
-            P[i] = {x, y};
-            i++;
-        }
-        is.close();
-        return n;
-    }
-    return 0;
-}
 
 // draw line para vec3
 void draw_line(Image img, vec3 A, vec3 B, Color C){
@@ -592,6 +535,7 @@ void draw_elements_triangles(Image img, vec4* P, int* indices, int n, Color*C){
         draw_triangle(img, P2, C2);
     }
 }
+
 void draw_elements_triangle_strip(Image img, vec4* P, int* indices, int n, Color* C){
     for(int i=0;i<(n-2); i++){
         vec4 P2[3] = {P[indices[i]], P[indices[i+1]], P[indices[i+2]]};
@@ -606,4 +550,24 @@ void draw_elements_triangle_fan(Image img, vec4* P, int* indices, int n, Color* 
         Color C2[3] = {C[indices[0]], C[indices[i+1]], C[indices[i+2]]};
         draw_triangle(img, P2, C2);
     } 
+}
+
+// tem algum problema nessa função que preciso identificar
+int lerArquivo(string filename, vec2 * P){
+    ifstream is(filename);
+    if(is){
+        int n, i=0;
+        is >> n;
+        P=(vec2*)malloc(sizeof(vec2));
+        while(i<n){
+            float x, y;
+            is>>x;
+            is>>y;
+            P[i] = {x, y};
+            i++;
+        }
+        is.close();
+        return n;
+    }
+    return 0;
 }

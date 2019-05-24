@@ -6,7 +6,8 @@
 
 struct Image{
     int width, height;
-    Color* data; 
+    Color* data;
+    float* zBuffer;
 };
 
 void flip_image();
@@ -19,6 +20,12 @@ void freeImage(Image img);
 
 // Retorna a cor de um pixel na imagem
 Color* pixel(Image I, int x, int y);
+
+// Retorna o valor do zbuffer no ponto dado
+float* zbuffer(Image I, int x, int y);
+
+// Inicializa todas as posições do zbuffer com -1
+void initZBuffer(Image img);
 
 // Inicializa a imagem com uma determinada cor
 void initImage(Image img, Color color);
