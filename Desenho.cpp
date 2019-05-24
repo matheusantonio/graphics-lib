@@ -117,16 +117,70 @@ vec2 recorte(vec2 Li, vec2 Lf, vec2 Pi, vec2 Pf, int token){
 void draw_line(Image I, float xi, float yi, float xf, float yf,  Color c){
     flip_image();
     
+    vec2 Li = {0,0};
+    vec2 Lf = {I.width,I.height};
+
     // Fazer recorte aqui
-    vec2 P1 = recorte({100,100}, {400,400}, {xi,yi}, {xf,yf}, -1);
-    vec2 P2 = recorte({100,100}, {400,400}, {xi,yi}, {xf,yf}, 1);
+    float p1 = -1*(xf - xi);
+    float p2 = (xf - xi);
+    float p3 = -1*(yf-yi);
+    float p4 = (yf-yi);
 
-    xi = P1.x;
-    xf = P2.x;
-    yi = P1.y;
-    yf = P2.y;
+    float q1 = xi - Li.x;
+    float q2 = Lf.x - xi;
+    float q3 = yi - Li.y;
+    float q4 = Lf.y - yi;
 
-    //======================
+
+    if((p1==0 && q1<0) || (p3==0 && q3<0) ) return;
+
+    float posarr[5], negarr[5];
+    int posind = 1, negind = 1;
+    posarr[0] = 1;
+    negarr[0] = 0;
+
+    if(p1!=0){
+        float t1=q1/p1, t2=q2/p2;
+        if(p1<0){
+            negarr[negind++] = t1;
+            posarr[posind++] = t2;
+        } else{
+            negarr[negind++] = t2;
+            posarr[posind++] = t1;
+        }
+    }
+    if(p3!=0){
+        float t3=q3/p3, t4=q4/p4;
+        if(p3<0){
+            negarr[negind++] = t3;
+            posarr[posind++] = t4;
+        } else{
+            negarr[negind++] = t4;
+            posarr[posind++] = t3;
+        }
+    }
+
+    float xni, xnf, yni, ynf;
+    float rn1=0, rn2=1;
+    for(int i=0;i<negind;i++){
+        if(negarr[i] > rn1) rn1 = negarr[i];
+        if(posarr[i] < rn2) rn2 = posarr[i]; 
+    }
+
+    if(rn1> rn2) return;
+
+    xni = xi + p2 * rn1;
+    yni = yi + p4 * rn1; // computing new points
+
+    xnf = xi + p2 * rn2;
+    ynf = yi + p4 * rn2;
+
+    xi=xni;
+    xf=xnf;
+    yi=yni;
+    yf=ynf;
+
+    //===========================================================================
     //Verificar se esses casos triviais sao necessários ou se o caso geral os cobre
     if(yi==yf){
         int xa = (xi < xf) ? xi : xf;

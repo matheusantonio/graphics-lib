@@ -62,12 +62,12 @@ int main()
         {100,100}, {100,400},{400,400},{400,100}
     };
 
-    draw_line_loop(Img, PCubo, 4, c_blue());
+    //draw_line_loop(Img, PCubo, 4, c_blue());
 
     draw_lines(Img, P, 12, c_red());
 
   
-    savePNG("figuras/testerecorte_3d.png", Img);
+    savePNG("figuras/testesemrecorte_3d.png", Img);
     freeImage(Img);
 
     return 0;
