@@ -49,25 +49,44 @@ int main()
 
     draw_elements_lines(Img, MP, indices, 24, c_green());
     */
-    vec2 P[12] = {
-        {10,450}, {250,300}, 
-        {240,310}, {230,230}, 
-        {230,230}, {430,430}, 
-        {230,230}, {400,235},
-        {400,235}, {320, 320}, 
-        {400,235}, {320,90}
-    };
 
-    vec2 PCubo[4] = {
-        {100,100}, {100,400},{400,400},{400,100}
-    };
+    int m=50, n=50;
+    int N = m*n;
+    float
+    u0 = 0, u1 = 1, du = (u1-u0)/(m-1),
+    v0 = 0, v1 = 1, dv = (v1-v0)/(n-1);
+    
+    vec4 P[N];
+    for(int i=0;i<m;i++){
+        for(int j=0;j<n;j++){
+            float u = u0 + i*du;
+            float v = v0 + j*dv;
+            P[i + j*m] = {u, v, sin(u*v/4), 1};
+        }
+    }
 
-    //draw_line_loop(Img, PCubo, 4, c_blue());
+    int Ni = m*n;
+    int indices[Ni];
+    int pos=-1;
+    for(int i=0;i<m-1;i++){
+        for(int j =0;j<n-1;j++){
+            indices[pos++] = i+j*m;
+            indices[pos++] = i+j*m+1;
+            indices[pos++] = i+j*m+i;
+            indices[pos++] = i+j*m+i+1;
+        }
+    }
+    
+    vec4 MP[n*m];
+    mat4 Model = rotate_y(0.2)*rotate_x(0.3)*translate(-0.5, -0.3, -0.1);
+    mat4 View = lookAt({1,3,2}, {0,0,0}, {0,2,0});
+    mat4 Projection = perspective(45,Img.width/(float)Img.height , 0.1, 10);
 
-    draw_lines(Img, P, 12, c_red());
-
+    mat4 M = Projection*View*Model;
+    multMV4(M, P, n*m, MP);
+    draw_elements_lines(Img, MP, indices, Ni, c_blue());
   
-    savePNG("figuras/testesemrecorte_3d.png", Img);
+    savePNG("figuras/wireframe.png", Img);
     freeImage(Img);
 
     return 0;

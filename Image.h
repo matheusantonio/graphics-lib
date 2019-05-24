@@ -13,7 +13,7 @@ struct Image{
 void flip_image();
 
 // Inicializa uma imagem
-Image newImage(int w, int h);
+Image newImage(int w, int h, bool useZbuffer=false);
 
 // Limpa o espaço reservado de uma imagem
 void freeImage(Image img);

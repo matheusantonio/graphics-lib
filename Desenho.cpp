@@ -80,7 +80,7 @@ void draw_line(Image I, float xi, float yi, float xf, float yf,  Color c){
     
     // Como definir o valor do recorte?
     vec2 Li = {0,0};
-    vec2 Lf = {I.width,I.height};
+    vec2 Lf = {(float)I.width,(float)I.height};
 
     // Fazer recorte aqui
     float p1 = -1*(xf - xi);

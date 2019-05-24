@@ -12,7 +12,7 @@ void flip_image(){
 
 
 // Inicializa uma imagem
-Image newImage(int w, int h, bool useZbuffer = false){
+Image newImage(int w, int h, bool useZbuffer){
     Image img = {w, h};
     img.data = (Color*)malloc(w*h*sizeof(Color));
     img.zBuffer = NULL;
