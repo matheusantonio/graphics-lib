@@ -182,6 +182,10 @@ vec4 operator+(vec4 u, vec4 v){
     return {u.x + v.x, u.y + v.y, u.z + v.z, u.w + v.w};
 }
 
+vec4 operator-(vec4 u, vec4 v){
+    return {u.x - v.x, u.y - v.y, u.z - v.z, u.w - v.w};
+}
+
 // multiplicação por escalar de vec4
 vec4 operator*(float a, vec4 v){
     return {a*v.x, a*v.y, a*v.z, a*v.w};

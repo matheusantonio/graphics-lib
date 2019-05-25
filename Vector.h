@@ -102,6 +102,8 @@ Quaternion operator*(float alpha, Quaternion q1);
 // Soma de vec4
 vec4 operator+(vec4 u, vec4 v);
 
+vec4 operator-(vec4 u, vec4 v);
+
 // multiplicação por escalar de vec4
 vec4 operator*(float a, vec4 v);
 

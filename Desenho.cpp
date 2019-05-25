@@ -74,27 +74,25 @@ void draw_implicit(Image I, Color color, Func f){
     }
 }
 
-// Desenha uma linha
-void draw_line(Image I, float xi, float yi, float xf, float yf,  Color c){
-    flip_image();
-    
+// Função de recorte no R2
+int clipline(Image img, float *xi, float*yi, float*xf, float*yf){
     // Como definir o valor do recorte?
     vec2 Li = {0,0};
-    vec2 Lf = {(float)I.width,(float)I.height};
+    vec2 Lf = {(float)img.width,(float)img.height};
 
     // Fazer recorte aqui
-    float p1 = -1*(xf - xi);
-    float p2 = (xf - xi);
-    float p3 = -1*(yf-yi);
-    float p4 = (yf-yi);
+    float p1 = -1*(*xf - *xi);
+    float p2 = (*xf - *xi);
+    float p3 = -1*(*yf-*yi);
+    float p4 = (*yf-*yi);
 
-    float q1 = xi - Li.x;
-    float q2 = Lf.x - xi;
-    float q3 = yi - Li.y;
-    float q4 = Lf.y - yi;
+    float q1 = *xi - Li.x;
+    float q2 = Lf.x - *xi;
+    float q3 = *yi - Li.y;
+    float q4 = Lf.y - *yi;
 
 
-    if((p1==0 && q1<0) || (p3==0 && q3<0) ) return;
+    if((p1==0 && q1<0) || (p3==0 && q3<0) ) return 1;
 
     float posarr[5], negarr[5];
     int posind = 1, negind = 1;
@@ -129,18 +127,27 @@ void draw_line(Image I, float xi, float yi, float xf, float yf,  Color c){
         if(posarr[i] < rn2) rn2 = posarr[i]; 
     }
 
-    if(rn1> rn2) return;
+    if(rn1> rn2) return 1;
 
-    xni = xi + p2 * rn1;
-    yni = yi + p4 * rn1; // computing new points
+    xni = *xi + p2 * rn1;
+    yni = *yi + p4 * rn1;
 
-    xnf = xi + p2 * rn2;
-    ynf = yi + p4 * rn2;
+    xnf = *xi + p2 * rn2;
+    ynf = *yi + p4 * rn2;
 
-    xi=xni;
-    xf=xnf;
-    yi=yni;
-    yf=ynf;
+    *xi=xni;
+    *xf=xnf;
+    *yi=yni;
+    *yf=ynf;
+
+    return 0;
+}
+
+// Desenha uma linha em R2
+void draw_line(Image I, float xi, float yi, float xf, float yf,  Color c){
+    flip_image();
+    
+    if(clipline (I, &xi, &yi, &xf, &yf)) return;
 
     //===========================================================================
     //Verificar se esses casos triviais sao necessários ou se o caso geral os cobre
@@ -436,8 +443,34 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
     draw_triangle(img, P2, 3, C);
 }
 
+int clipline(vec4* A, vec4 B, vec4 n){
+
+    float a = dot(vec4to3(*A), vec4to3(n));
+    //if(a<0) return 1;
+
+    float t = a/dot(vec4to3(*A-B), vec4to3(n));
+
+    vec4 R = (1-t)* *A + t*B;
+
+    A = &R;
+
+    return 0;
+}
+
 // Desenha uma linha na tela
 void draw_line(Image img, vec4 A, vec4 B, Color color){
+
+    vec4 n[] = {
+        {0, 0, -1, 1},
+        {0, 0, 1, 1},
+        {1, 0, 0, 1},
+        {-1, 0, 0, 1},
+        {0, 1, 0, 1},
+        {0, -1, 0, 1},
+    };
+    for(int i = 0; i < 6; i++)
+        if(clipline(&A, B, n[i])) return;
+
     vec3 v0 = toScreen(img, A);
     vec3 v1 = toScreen(img, B);
     draw_line(img, v0, v1, color);

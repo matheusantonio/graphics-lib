@@ -80,7 +80,7 @@ void draw_line(Image img, vec3 A, vec3 B, Color C);
 // draw triangle para vec3
 void draw_triangle(Image img, vec3 P[3], Color C[3]);
 
-// Desenha uma linha na tela
+// Desenha uma linha na tela em R4
 void draw_line(Image img, vec4 A, vec4 B, Color color);
 
 void draw_lines(Image img, vec4 *P, int n, Color c);
