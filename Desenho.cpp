@@ -521,9 +521,33 @@ void draw_elements_line_loop(Image img, vec4* P, int* indices, int n, Color c){
     
 }
 
+int clip_triangle(Image img, vec4 P[3], Color C[3], vec4 n){
+    return 0;
+}
 
 // Desenha um triangulo com vertices P (coordenadas normalizadas)
-void draw_triangle(Image img, vec4 P[3], Color C[3]){
+void draw_triangle(Image img, vec4 Pin[3], Color Cin[3]){
+    vec4 P[3];
+    Color C[3];
+    
+    // Copia Pin e Cin para P e C
+    for(int i=0;i<3;i++){
+        P[i] = Pin[i];
+        C[i] = Cin[i];
+    }
+
+    vec4 n[] = {
+        {0, 0, -1, 1},
+        {0, 0, 1, 1},
+        {1, 0, 0, 1},
+        {-1, 0, 0, 1},
+        {0, 1, 0, 1},
+        {0, -1, 0, 1},
+    };
+    for(int i = 0; i < 6; i++)
+        if(clip_triangle(img, P, C, n[i]))
+            return;
+    
     vec3 P3[] = {
         toScreen(img, P[0]),
         toScreen(img, P[1]),
