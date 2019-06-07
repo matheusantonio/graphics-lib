@@ -8,9 +8,9 @@ https://github.com/nothings/stb
 versão utilizada: 1.13
 
 Por fazeres que foram pulados:
-- Recorte em 3D
-- Verificação do zbuffer antes de desenhar pixel em 3d (como identificar quando o pixel estará sendo desenhado em 3d?)
-- Corrigir a função de ler de um arquivo obj
+- Recorte em 3D (até que apareça algum problema, pronto)
+- Verificação do zbuffer antes de desenhar pixel em 3d (funções draw line e draw triangle refeitas para vec3)
+- Corrigir a função de ler de um arquivo obj (falta testar)
 
 Tarefas que faltam:
 

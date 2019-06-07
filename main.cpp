@@ -7,10 +7,10 @@
 
 int main()
 {
-    Image Img = newImage(500,500);
+    Image Img = newImage(500,500, true);
     initImage(Img, c_white());
 
-
+/*
     // Vertices de um cubo
     vec4 P[8] = {
         {0, 0, 0, 1}, {1, 0, 0, 1}, {1, 1, 0, 1}, {0, 1, 0, 1},
@@ -48,8 +48,8 @@ int main()
     multMV4(M, P2, 8, MP);
 
     draw_elements_lines(Img, MP, indices, 24, c_green());
-    
-/*
+  */  
+
     int m=50, n=50;
     int N = m*n;
     float
@@ -65,11 +65,11 @@ int main()
         }
     }
 
-    int Ni = m*n;
+    int Ni = 6*m*n;
     int indices[Ni];
     int pos=-1;
-    for(int i=0;i<m-1;i++){
-        for(int j =0;j<n-1;j++){
+    for(int i=0;i<m-2;i++){
+        for(int j =1;j<n-1;j++){
             indices[pos++] = i+j*m;
             indices[pos++] = i+j*m+1;
             indices[pos++] = i+j*m+i;
@@ -84,9 +84,11 @@ int main()
 
     mat4 M = Projection*View*Model;
     multMV4(M, P, n*m, MP);
-    draw_elements_lines(Img, MP, indices, Ni, c_blue());
-    */
-    savePNG("figuras/recorte3d.png", Img);
+
+    draw_line_strip(Img, P, N, c_blue());
+//    draw_elements_lines(Img, MP, indices, Ni, c_blue());
+    
+    savePNG("figuras/woreframe3d.png", Img);
     freeImage(Img);
 
     return 0;

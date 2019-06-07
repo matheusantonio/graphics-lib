@@ -427,10 +427,127 @@ void draw_bezier_spline(Image img, vec2* P, int n, Color c){
     }
 }
 
+float lerpZ(float t, float z1,float z2){
+    return (1-t)*z1 + t*z2;
+}
 
 // draw line para vec3
-void draw_line(Image img, vec3 A, vec3 B, Color C){
-    draw_line(img, A.x, A.y, B.x, B.y, C);
+void draw_line(Image I, vec3 A, vec3 B, Color C){
+    flip_image();
+    
+    //===========================================================================
+    //Verificar se esses casos triviais sao necessários ou se o caso geral os cobre
+    if(A.y==B.y){
+        int xa = (A.x < B.x) ? A.x : B.x;
+        int xb = (A.x > B.x) ? A.x : B.x;
+        for(int x = xa; x<xb;x++){
+            float *zb = zbuffer(I, x, A.y);
+            float z = lerpZ(x/(xb-xa), A.z, B.z); 
+            if( z > *zb){
+                draw_pixel(I, x, A.y, C);
+                *zb = z; 
+            }
+        }
+    }
+    if(A.x==B.x){
+        int ya = (A.y < B.y) ? A.y : B.y;
+        int yb = (A.y > B.y) ? A.y : B.y;
+        for(int y = ya; y<yb;y++){
+            float *zb = zbuffer(I, A.x, y);
+            float z = lerpZ((y/(yb-ya)), A.z, B.z);
+            if(z>*zb){
+                draw_pixel(I, A.x, y, C);
+                *zb = z;
+            }
+        }
+    }
+    if(B.x-A.x == B.y-A.y){
+        int xa, xb, y;
+        if(A.x<B.x){
+            xa=A.x, xb=B.x, y=A.y;
+        } else{
+            xa=B.x, xb=A.x, y=B.y;
+        }
+        for(int x=xa;x<xb;x++, y++){
+            
+            float *zb = zbuffer(I, x, y);
+            float z = lerpZ(x/(xb-xa), A.z, B.z);
+            if(z>*zb){
+                draw_pixel(I, x, y, C);
+                *zb = z;
+            }
+        }
+    } else{
+        int dx = B.x-A.x, dy=B.y-A.y;
+        int edx = dx>0?dx:dx*-1; 
+        int edy = dy>0?dy:dy*-1; //o erro pode ficar negativo e y nunca vai incrementar ou decrementar
+        int erro = 0;
+        
+        if(edx > edy){
+            int y = A.y;
+            if(dx>=0){
+                for(int x=A.x; x<=B.x; x++){
+                    float *zb = zbuffer(I, x, y);
+                    float z = lerpZ( x/(B.x-A.x), A.z, B.z);
+                    if(z>*zb){
+                        draw_pixel(I, x, y, C);
+                        *zb=z;
+                    }
+                    
+                    erro = erro+2*edy;
+                    if(erro > dx){
+                        erro = erro-2*edx;
+                        y=(dy>0)?y+1:y-1; 
+                    }
+                }
+            } else {
+                for(int x=A.x; x>=B.x; x--){ 
+                    float *zb = zbuffer(I, x, y);
+                    float z = lerpZ( x/(A.x-B.x), A.z, B.z);
+                    if(z>*zb){
+                        draw_pixel(I, x, y, C);
+                        *zb=z;
+                    }
+                    erro = erro+2*edy;
+                    if(erro > dx){
+                        erro = erro-2*edx;
+                        y=(dy>0)?y+1:y-1;
+                    }
+                }
+            }
+        } else{
+            int x = A.x; 
+            if(dy>=0){
+                for(int y=A.y; y<=B.y; y++){
+                    float *zb = zbuffer(I, x, y);
+                    float z = lerpZ( y/(B.y-A.y), A.z, B.z);
+                    if(z>*zb){
+                        draw_pixel(I, x, y, C);
+                        *zb=z;
+                    }
+                    erro = erro+2*edx;
+                    if(erro > dy){
+                        erro = erro-2*edy;
+                        x=(dx>0)?x+1:x-1;
+                    }
+                }
+            } else {
+                for(int y=A.y; y>=B.y; y--){ 
+                    float *zb = zbuffer(I, x, y);
+                    float z = lerpZ( y/(A.y-B.y), A.z, B.z);
+                    if(z>*zb){
+                        draw_pixel(I, x, y, C);
+                        *zb=z;
+                    }
+                    erro = erro+2*edx;
+                    if(erro > dy){
+                        erro = erro-2*edy;
+                        x=(dx>0)?x+1:x-1; 
+                    }
+                }
+            }
+        }        
+    }
 }
 
 // draw triangle para vec3
@@ -440,7 +557,34 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
         {P[1].x, P[1].y},
         {P[2].x, P[2].y}
     };
-    draw_triangle(img, P2, 3, C);
+
+    flip_image();
+
+    int mx=0, my=0, xm=0, ym=0;
+    for(int i=0;i<3;i++){
+        if(P[i].x < mx) mx = P[i].x;
+        if(P[i].x > xm) xm = P[i].x;
+        if(P[i].y < my) my = P[i].y;
+        if(P[i].y > ym) ym = P[i].y;
+    }
+
+    for(int x=mx; x<=xm; x++){
+        for(int y=my; y<=ym; y++){
+            float bari[3];
+            barycentric({(float)x,(float)y}, P2, bari);
+            if(bari[0] >= 0 && bari[0] <= 1 &&
+               bari[1] >= 0 && bari[1] <= 1 &&
+               bari[2] >= 0 && bari[2] <= 1){
+                   Color c = intertri(bari, C[0], C[1], C[2]);
+                   float *zb = zbuffer(img, x, y);
+                   float z = bari[0]*P[0].z + bari[1]*P[1].z + bari[2]*P[2].z;
+                   if(z>*zb){
+                       draw_pixel(img, x, y, c);
+                       *zb = z;
+                   }
+               }
+        }
+    }
 }
 
 int clipline(vec4* A, vec4 B, vec4 n){
@@ -474,6 +618,7 @@ void draw_line(Image img, vec4 A, vec4 B, Color color){
     vec3 v0 = toScreen(img, A);
     vec3 v1 = toScreen(img, B);
     draw_line(img, v0, v1, color);
+
 }
 
 void draw_lines(Image img, vec4 *P, int n, Color c){
@@ -610,21 +755,21 @@ void draw_elements_triangle_fan(Image img, vec4* P, int* indices, int n, Color* 
 }
 
 // tem algum problema nessa função que preciso identificar
-int lerArquivo(string filename, vec2 * P){
-    ifstream is(filename);
-    if(is){
-        int n, i=0;
-        is >> n;
-        P=(vec2*)malloc(sizeof(vec2));
-        while(i<n){
-            float x, y;
-            is>>x;
-            is>>y;
-            P[i] = {x, y};
-            i++;
-        }
-        is.close();
-        return n;
+int lerArquivo(char* filename, vec2 * P){
+
+    FILE *arq = fopen(filename, "r");
+    if(!arq) return 1;
+
+    int N;
+
+    fscanf(arq, "%d\n", &N);
+
+    P = (vec2*)malloc(N*sizeof(vec2));
+
+    for(int i=0;i<N;i++){
+        fscanf(arq, "%f %f\n", &P[i].x, &P[i].y);
     }
+
+    fclose(arq);
     return 0;
 }
