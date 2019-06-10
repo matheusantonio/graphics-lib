@@ -434,7 +434,7 @@ float lerpZ(float t, float z1,float z2){
 // draw line para vec3
 void draw_line(Image I, vec3 A, vec3 B, Color C){
     flip_image();
-    
+
     //===========================================================================
     //Verificar se esses casos triviais sao necessários ou se o caso geral os cobre
     if(A.y==B.y){
@@ -617,6 +617,7 @@ void draw_line(Image img, vec4 A, vec4 B, Color color){
 
     vec3 v0 = toScreen(img, A);
     vec3 v1 = toScreen(img, B);
+
     draw_line(img, v0, v1, color);
 
 }
