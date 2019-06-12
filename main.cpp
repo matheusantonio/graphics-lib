@@ -59,13 +59,15 @@ int main()
 	float dv = (v1-v0)/(n-1);
 
     vec4 P[m*n];
+    Color C[n*m];
     for(int i = 0; i < m; i++){
         for(int j = 0; j < n; j++){
             float u = u0 + i*du;
             float v = v0 + j*dv;
             int ij = i + j*m;
             P[ij] = {u, v, sin(u*v/4), 1};
-            
+            C[ij] = bilinear((float)i/m, (float)j/n, c_blue(), c_green(), c_red(), c_purple());
+            //C[ij] = c_green();
             
         }
     }
@@ -76,32 +78,39 @@ int main()
     for(int i = 0; i < m-1; i++){
 		for(int j = 0; j < n-1; j++){	
 			int ij = i + j*m;
-			indices[k++] = ij;
+			/*indices[k++] = ij;
 			indices[k++] = ij+1;
 			indices[k++] = ij+m;
 			
 			indices[k++] = ij+m+1;
 			indices[k++] = ij+m;
-			indices[k++] = ij+1;
+			indices[k++] = ij+1;*/
+            indices[k++] = ij;
+            indices[k++] = ij+1;
+            indices[k++] = ij;
+            indices[k++] = ij+m;
+            indices[k++] = ij+m;
+            indices[k++] = ij+1;
 		}
 	}
     
     vec4 MP[n*m];
-    mat4 Model = rotate_y(3.14/2);
-    mat4 View = lookAt({10,10,10}, {0,0,0}, {0,0,1});
-    mat4 Projection = orthogonal(-2, 2, -2, 2, -3, 3)*perspective(50,(float)Img.width/Img.height , 0.1, 10);
+    mat4 Model = scale(3, 3, 2)*translate(0,0,-2)*rotate_z(15)*rotate_y(15)*rotate_z(10);
+    mat4 View = lookAt({5,20,5}, {0,0,0}, {0,0,1});
+    mat4 Projection = frustum(-2, 2, -2, 2, -3, 3);//orthogonal(-2, 2, -2, 2, -3, 3);//*perspective(50,(float)Img.width/Img.height , 0.1, 10);
 
 
     mat4 M = Projection*View*Model;
     multMV4(M, P, N, MP);
 
-    /*for(int i=0;i<N;i++){
-        cout << i<<": " << MP[i].x << ", " << MP[i].y << ", " << MP[i].z << endl;
-    } */
+    for(int i=0;i<N;i++){
+        //cout << MP[i].x/MP[i].w << ", " << MP[i].y/MP[i].w << ", " << MP[i].z/MP[i].w << " | "<< MP[i].w<< endl;
+    } 
 
     draw_elements_lines(Img, MP, indices, Ni, c_blue());    
+    //draw_elements_triangles(Img, MP, indices, Ni, C);
 
-    savePNG("figuras/wireframe3d.png", Img);
+    savePNG("figuras/wireframe_lines3d.png", Img);
     freeImage(Img);
 
     return 0;

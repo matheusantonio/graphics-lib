@@ -226,7 +226,6 @@ mat4 translate(float a, float b, float c){
     T.M[0][3] = a;
     T.M[1][3] = b;
     T.M[2][3] = c;
-    T.M[3][3] = 1;
     return T;
 }
 
