@@ -123,6 +123,10 @@ float dot(vec3 u, vec3 v){
     return u.x*v.x + u.y*v.y + u.z*v.z;
 }
 
+float dot(vec4 u, vec4 v){
+    return u.x*v.x + u.y*v.y + u.z*v.z + u.w*v.w;
+}
+
 // Norma de um vetor no R3
 float norm(vec3 u){
     return sqrt(pow(u.x, 2) + pow(u.y, 2) + pow(u.z, 2));
@@ -324,9 +328,9 @@ mat4 lookAt(vec3 O, vec3 C, vec3 Up){
 }
 
 mat4 perspective(float teta, float a, float n, float f){
-    float t = n*tan(teta/2);
+    float t = n*tan(((teta/180)*M_PI)/2);
     float r = t*a;
-    return frustum(-1*r, r, -1*t, t, n, f);
+    return frustum(-1*r, r, -1*t, t, -n, -f);
 }
 
 

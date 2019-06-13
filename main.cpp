@@ -23,14 +23,14 @@ int main()
     };
 
     // Model Matrix
-    mat4 Model = rotate_y(0.3)*rotate_x(0.2)*translate(0, 0, -0.5);
+    mat4 Model = rotate_y(0.2)*rotate_x(0.1)*translate(-0.5, -0.5, -0.5);
     // View Matrix
-    //mat4 View = translate(-1, -1, -2);
-    mat4 View = lookAt({1,1,1}, {0,0,0}, {0,2,0});
+    mat4 View = translate(0, 0, -2);
+    //mat4 View = lookAt({1,1,1}, {0,0,0}, {0,2,0});
     // Projection Matrix:
-    //mat4 Projection = frustum(-2,2, -2,2, -2,-4);
-    mat4 Projection = orthogonal(-2, 2, -2, 2, -3, 3)*perspective(45,Img.width/(float)Img.height , 0.1, 10);
-    //mat4 Projection = orthogonal(-2, 2, -2, 2, -2, 2);
+    //mat4 Projection = frustum(-2,2, -2,2, -2,4);
+    //mat4 Projection = orthogonal(-2, 2, -2, 2, -3, 3)*perspective(50,Img.width/(float)Img.height , 0.1, 10);
+    mat4 Projection = orthogonal(-2, 2, -2, 2, -2, 2);
     // MVP Matrix
     mat4 M = Projection*View*Model;
     vec4 MP[8];
@@ -48,11 +48,11 @@ int main()
     multMV4(M, P2, 8, MP);
 
     draw_elements_lines(Img, MP, indices, 24, c_green());
-*/
 
-    int m=30, n=20;
+*/ 
+    int m=50, n=50;
     int N = m*n;
-    float u0 = 0, u1 = 1;
+    float u0 = -5, u1 = 5;
 	float du = (u1-u0)/(m-1);
 	
 	float v0 = -5, v1 = 5;
@@ -66,7 +66,7 @@ int main()
             float v = v0 + j*dv;
             int ij = i + j*m;
             P[ij] = {u, v, sin(u*v/4), 1};
-            C[ij] = bilinear((float)i/m, (float)j/n, c_blue(), c_green(), c_red(), c_purple());
+            C[ij] = bilinear((float)i/m, (float)j/n, c_blue(), {0,0,20}, {20,0,0}, c_red());
             //C[ij] = c_green();
             
         }
@@ -78,39 +78,48 @@ int main()
     for(int i = 0; i < m-1; i++){
 		for(int j = 0; j < n-1; j++){	
 			int ij = i + j*m;
-			/*indices[k++] = ij;
+            
+			indices[k++] = ij;
 			indices[k++] = ij+1;
 			indices[k++] = ij+m;
 			
 			indices[k++] = ij+m+1;
 			indices[k++] = ij+m;
-			indices[k++] = ij+1;*/
-            indices[k++] = ij;
+			indices[k++] = ij+1;
+            
+            /*indices[k++] = ij;
             indices[k++] = ij+1;
             indices[k++] = ij;
             indices[k++] = ij+m;
             indices[k++] = ij+m;
             indices[k++] = ij+1;
+            indices[k++] = ij+m;
+            indices[k++] = ij+m+1;
+            indices[k++] = ij+m+1;
+            indices[k++] = ij+1;
+            */
+            
+            
 		}
 	}
     
     vec4 MP[n*m];
-    mat4 Model = scale(3, 3, 2)*translate(0,0,-2)*rotate_z(15)*rotate_y(15)*rotate_z(10);
-    mat4 View = lookAt({5,20,5}, {0,0,0}, {0,0,1});
-    mat4 Projection = frustum(-2, 2, -2, 2, -3, 3);//orthogonal(-2, 2, -2, 2, -3, 3);//*perspective(50,(float)Img.width/Img.height , 0.1, 10);
+    mat4 Model = translate(3,0,-2)*rotate_z(M_PI/2);
+    mat4 View = lookAt({5,5,10}, {0,0,0}, {0,0,1});
+    mat4 Projection = orthogonal(-2, 2, -2, 2, -5, 5)*perspective(50,(float)Img.width/Img.height , 1, 10);//frustum(-2, 2, -2, 2, -3, 3);//orthogonal(-2, 2, -2, 2, -3, 3);//*perspective(50,(float)Img.width/Img.height , 0.1, 10);
 
 
     mat4 M = Projection*View*Model;
     multMV4(M, P, N, MP);
 
-    for(int i=0;i<N;i++){
-        //cout << MP[i].x/MP[i].w << ", " << MP[i].y/MP[i].w << ", " << MP[i].z/MP[i].w << " | "<< MP[i].w<< endl;
-    } 
+/*    for(int i=0;i<N;i++){
+        cout << MP[i].x/MP[i].w << ", " << MP[i].y/MP[i].w << ", " << MP[i].z/MP[i].w << " | "<< MP[i].w<< endl;
+    } */
 
-    draw_elements_lines(Img, MP, indices, Ni, c_blue());    
-    //draw_elements_triangles(Img, MP, indices, Ni, C);
+    //draw_elements_lines(Img, MP, indices, Ni, c_blue());    
+    draw_elements_triangles(Img, MP, indices, Ni, C);
 
-    savePNG("figuras/wireframe_lines3d.png", Img);
+    savePNG("figuras/testeocean3d.png", Img);
     freeImage(Img);
 
     return 0;

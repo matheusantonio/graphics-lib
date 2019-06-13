@@ -431,9 +431,20 @@ float lerpZ(float t, float z1,float z2){
     return (1-t)*z1 + t*z2;
 }
 
+void drawZBuffer(Image I, float x, float y, float z, Color C){
+    float *zb = zbuffer(I, x, y); 
+    if( z > *zb){
+        draw_pixel(I, x, y, C);
+        *zb = z; 
+    }
+}
+
 // draw line para vec3
 void draw_line(Image I, vec3 A, vec3 B, Color C){
+//      draw_line(I, A.x, A.y,B.x, B.y, C);
+ 
     flip_image();
+
 
     //===========================================================================
     //Verificar se esses casos triviais sao necessários ou se o caso geral os cobre
@@ -441,24 +452,16 @@ void draw_line(Image I, vec3 A, vec3 B, Color C){
         int xa = (A.x < B.x) ? A.x : B.x;
         int xb = (A.x > B.x) ? A.x : B.x;
         for(int x = xa; x<xb;x++){
-            float *zb = zbuffer(I, x, A.y);
             float z = lerpZ(x/(xb-xa), A.z, B.z); 
-            if( z > *zb){
-                draw_pixel(I, x, A.y, C);
-                *zb = z; 
-            }
+            drawZBuffer(I, x, A.y, z, C);
         }
     }
     if(A.x==B.x){
         int ya = (A.y < B.y) ? A.y : B.y;
         int yb = (A.y > B.y) ? A.y : B.y;
         for(int y = ya; y<yb;y++){
-            float *zb = zbuffer(I, A.x, y);
             float z = lerpZ((y/(yb-ya)), A.z, B.z);
-            if(z>*zb){
-                draw_pixel(I, A.x, y, C);
-                *zb = z;
-            }
+            drawZBuffer(I, A.x, y, z, C);
         }
     }
     if(B.x-A.x == B.y-A.y){
@@ -469,13 +472,8 @@ void draw_line(Image I, vec3 A, vec3 B, Color C){
             xa=B.x, xb=A.x, y=B.y;
         }
         for(int x=xa;x<xb;x++, y++){
-            
-            float *zb = zbuffer(I, x, y);
             float z = lerpZ(x/(xb-xa), A.z, B.z);
-            if(z>*zb){
-                draw_pixel(I, x, y, C);
-                *zb = z;
-            }
+            drawZBuffer(I, x, y,z,  C);
         }
     } else{
         int dx = B.x-A.x, dy=B.y-A.y;
@@ -487,12 +485,8 @@ void draw_line(Image I, vec3 A, vec3 B, Color C){
             int y = A.y;
             if(dx>=0){
                 for(int x=A.x; x<=B.x; x++){
-                    float *zb = zbuffer(I, x, y);
                     float z = lerpZ( x/(B.x-A.x), A.z, B.z);
-                    if(z>*zb){
-                        draw_pixel(I, x, y, C);
-                        *zb=z;
-                    }
+                    drawZBuffer(I, x, y, z, C);
                     
                     erro = erro+2*edy;
                     if(erro > dx){
@@ -502,12 +496,9 @@ void draw_line(Image I, vec3 A, vec3 B, Color C){
                 }
             } else {
                 for(int x=A.x; x>=B.x; x--){ 
-                    float *zb = zbuffer(I, x, y);
                     float z = lerpZ( x/(A.x-B.x), A.z, B.z);
-                    if(z>*zb){
-                        draw_pixel(I, x, y, C);
-                        *zb=z;
-                    }
+                    drawZBuffer(I, x, y, z, C);
+                    
                     erro = erro+2*edy;
                     if(erro > dx){
                         erro = erro-2*edx;
@@ -519,12 +510,8 @@ void draw_line(Image I, vec3 A, vec3 B, Color C){
             int x = A.x; 
             if(dy>=0){
                 for(int y=A.y; y<=B.y; y++){
-                    float *zb = zbuffer(I, x, y);
                     float z = lerpZ( y/(B.y-A.y), A.z, B.z);
-                    if(z>*zb){
-                        draw_pixel(I, x, y, C);
-                        *zb=z;
-                    }
+                    drawZBuffer(I, x, y, z, C);
                     erro = erro+2*edx;
                     if(erro > dy){
                         erro = erro-2*edy;
@@ -533,12 +520,9 @@ void draw_line(Image I, vec3 A, vec3 B, Color C){
                 }
             } else {
                 for(int y=A.y; y>=B.y; y--){ 
-                    float *zb = zbuffer(I, x, y);
                     float z = lerpZ( y/(A.y-B.y), A.z, B.z);
-                    if(z>*zb){
-                        draw_pixel(I, x, y, C);
-                        *zb=z;
-                    }
+                    drawZBuffer(I, x, y, z, C);
+
                     erro = erro+2*edx;
                     if(erro > dy){
                         erro = erro-2*edy;
@@ -587,16 +571,24 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
     }
 }
 
-int clipline(vec4* A, vec4 B, vec4 n){
+int clipline(vec4* A, vec4* B, vec4 n){
 
-    float a = dot(vec4to3(*A), vec4to3(n));
+    float a = dot(*A, n);
     //if(a<0) return 1;
 
-    float t = a/dot(vec4to3(*A-B), vec4to3(n));
+    float t = a/dot((*A-*B), n);
 
-    vec4 R = (1-t)* *A + t*B;
+    vec4 R = (1-t)* *A + t* *B;
 
     A = &R;
+
+    /*float b = dot(*B, n);
+
+    t = b/dot((*A-*B), n);
+
+    R = (1-t)* *A + t* *B;
+
+    B = &R;*/
 
     return 0;
 }
@@ -613,7 +605,7 @@ void draw_line(Image img, vec4 A, vec4 B, Color color){
         {0, -1, 0, 1},
     };
     for(int i = 0; i < 6; i++)
-        if(clipline(&A, B, n[i])) return;
+        if(clipline(&A, &B, n[i])) return;
 
     vec3 v0 = toScreen(img, A);
     vec3 v1 = toScreen(img, B);

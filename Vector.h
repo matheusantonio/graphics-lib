@@ -80,6 +80,8 @@ vec3 operator-(vec3 u, vec3 v);
 // Produto interno entre vetores no R3
 float dot(vec3 u, vec3 v);
 
+float dot(vec4 u, vec4 v);
+
 // Norma de um vetor no R3
 float norm(vec3 u);
 
