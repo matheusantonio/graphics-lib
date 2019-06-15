@@ -147,6 +147,15 @@ vec3 cross(vec3 u, vec3 v){
     };
 }
 
+Quaternion exp(float e, vec3 u){
+    Quaternion q;
+    q.a = cos(e/2);
+    q.b = sin(e/2)*u.x;
+    q.c = sin(e/2)*u.y;
+    q.d = sin(e/2)*u.z;
+    return q;
+}
+
 // QUARTERNIOS
 // Operação de soma de quartérnios
 Quaternion operator+(Quaternion q1, Quaternion q2){
@@ -172,10 +181,10 @@ Quaternion operator*(float alpha, Quaternion q1){
 Quaternion operator*(Quaternion q1, Quaternion q2){
     Quaternion q;
 
-    q.a = q1.a*q2.a + q1.b*q2.b + q1.c*q2.c + q1.d*q2.d;
-    q.b = q1.a*q2.b + q1.b*q2.a + q1.d*q2.d - q1.d*q2.c;
-    q.c = q1.a*q2.c + q1.c*q2.a - q1.b*q2.d + q1.d*q2.b;
-    q.d = q1.a*q2.d + q1.d*q2.a + q1.b*q2.c - q1.c*q2.b;
+    q.a = q1.a*q2.a - q1.b*q2.b - q1.c*q2.c - q1.d*q2.d;//q1.a*q2.a + q1.b*q2.b + q1.c*q2.c + q1.d*q2.d;
+    q.b = q1.a*q2.b + q1.b*q2.a + q1.c*q2.d - q1.d*q2.c;//q1.a*q2.b + q1.b*q2.a + q1.d*q2.d - q1.d*q2.c;
+    q.c = q1.a*q2.c - q1.b*q2.d + q1.c*q2.a + q1.d*q2.b;//q1.a*q2.c + q1.c*q2.a - q1.b*q2.d + q1.d*q2.b;
+    q.d = q1.a*q2.d + q1.b*q2.c - q1.c*q2.b + q1.d*q2.a;//q1.a*q2.d + q1.d*q2.a + q1.b*q2.c - q1.c*q2.b;
 
     return q;
 }
@@ -204,7 +213,7 @@ vec3 vec4to3(vec4 u){
 // MATRIZ DE QUATRO DIMENSÕES
 // Multiplicação de matrizes de 4 dimensões
 mat4 operator*(mat4 A, mat4 B){
-    mat4 C;
+    /* mat4 C;
     for(int i=0;i<4;i++){
         for(int j=0;j<4;j++){
             float s = 0;
@@ -213,39 +222,52 @@ mat4 operator*(mat4 A, mat4 B){
             }
             C.M[i][j] = s;
         }
-    }
+    }*/
 
-    return C;
+    return {{
+        { A.M[0][0]*B.M[0][0]+A.M[0][1]*B.M[1][0]+A.M[0][2]*B.M[2][0]+A.M[0][3]*B.M[3][0], 
+          A.M[0][0]*B.M[0][1]+A.M[0][1]*B.M[1][1]+A.M[0][2]*B.M[2][1]+A.M[0][3]*B.M[3][1],
+          A.M[0][0]*B.M[0][2]+A.M[0][1]*B.M[1][2]+A.M[0][2]*B.M[2][2]+A.M[0][3]*B.M[3][2], 
+          A.M[0][0]*B.M[0][3]+A.M[0][1]*B.M[1][3]+A.M[0][2]*B.M[2][3]+A.M[0][3]*B.M[3][3]},
+
+        { A.M[1][0]*B.M[0][0]+A.M[1][1]*B.M[1][0]+A.M[1][2]*B.M[2][0]+A.M[1][3]*B.M[3][0], 
+          A.M[1][0]*B.M[0][1]+A.M[1][1]*B.M[1][1]+A.M[1][2]*B.M[2][1]+A.M[1][3]*B.M[3][1],
+          A.M[1][0]*B.M[0][2]+A.M[1][1]*B.M[1][2]+A.M[1][2]*B.M[2][2]+A.M[1][3]*B.M[3][2], 
+          A.M[1][0]*B.M[0][3]+A.M[1][1]*B.M[1][3]+A.M[1][2]*B.M[2][3]+A.M[1][3]*B.M[3][3]},
+
+        { A.M[2][0]*B.M[0][0]+A.M[2][1]*B.M[1][0]+A.M[2][2]*B.M[2][0]+A.M[2][3]*B.M[3][0], 
+          A.M[2][0]*B.M[0][1]+A.M[2][1]*B.M[1][1]+A.M[2][2]*B.M[2][1]+A.M[2][3]*B.M[3][1],
+          A.M[2][0]*B.M[0][2]+A.M[2][1]*B.M[1][2]+A.M[2][2]*B.M[2][2]+A.M[2][3]*B.M[3][2], 
+          A.M[2][0]*B.M[0][3]+A.M[2][1]*B.M[1][3]+A.M[2][2]*B.M[2][3]+A.M[2][3]*B.M[3][3]},
+
+        { A.M[3][0]*B.M[0][0]+A.M[3][1]*B.M[1][0]+A.M[3][2]*B.M[2][0]+A.M[3][3]*B.M[3][0], 
+          A.M[3][0]*B.M[0][1]+A.M[3][1]*B.M[1][1]+A.M[3][2]*B.M[2][1]+A.M[3][3]*B.M[3][1],
+          A.M[3][0]*B.M[0][2]+A.M[3][1]*B.M[1][2]+A.M[3][2]*B.M[2][2]+A.M[3][3]*B.M[3][2], 
+          A.M[3][0]*B.M[0][3]+A.M[3][1]*B.M[1][3]+A.M[3][2]*B.M[2][3]+A.M[3][3]*B.M[3][3]}
+    }};
+
+
+    //return C;
 }
 
 // Translação usando matrizes de 4 dimensões
 mat4 translate(float a, float b, float c){
-    mat4 T;
-    for(int i=0;i<4;i++){
-        for(int j=0;j<4;j++){
-            if(i==j) T.M[i][j] = 1;
-            else T.M[i][j] = 0;
-        }
-    }
-    T.M[0][3] = a;
-    T.M[1][3] = b;
-    T.M[2][3] = c;
-    return T;
+    return {{
+        {1,0,0,a},
+        {0,1,0,b},
+        {0,0,1,c},
+        {0,0,0,1}
+    }};
 }
 
 // Gera matriz de escala m4
 mat4 scale(float a, float b, float c){
-    mat4 T;
-    for(int i=0;i<4;i++){
-        for(int j=0;j<4;j++){
-            if(i!=j) T.M[i][j] = 0;
-        }
-    }
-    T.M[0][0] = a;
-    T.M[1][1] = b;
-    T.M[2][2] = c;
-    T.M[3][3] = 1;
-    return T;
+    return {{
+        {a, 0, 0, 0},
+        {0, b, 0, 0},
+        {0, 0, c, 0},
+        {0, 0, 0, 1}
+    }};
 }
 
 // Matriz de rotação em torno do eixo X
@@ -321,9 +343,18 @@ mat4 lookAt(vec3 O, vec3 C, vec3 Up){
     vec3 s = normalize(cross(f, Up));
     vec3 u = cross(s, f);
 
-    mat4 A = { s.x, s.y, s.z, 0 , u.x, u.y, u.z, 0, -1*f.x, -1*f.y, -1*f.z, 0, 0, 0, 0, 1};
-    mat4 B = {1, 0, 0, -1*O.x, 0, 1, 0, -1*O.y, 0, 0, 1, -1*O.z, 0, 0, 0, 1};
-    
+    mat4 A = {{
+        {s.x, s.y, s.z, 0 }, 
+        {u.x, u.y, u.z, 0}, 
+        {-1*f.x, -1*f.y, -1*f.z, 0}, 
+        {0, 0, 0, 1}
+    }};
+    mat4 B = {{
+        {1, 0, 0, -1*O.x}, 
+        {0, 1, 0, -1*O.y}, 
+        {0, 0, 1, -1*O.z}, 
+        {0, 0, 0, 1}
+    }};
     return A*B;
 }
 

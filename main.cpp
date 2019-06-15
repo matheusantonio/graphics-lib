@@ -8,9 +8,9 @@
 int main()
 {
     Image Img = newImage(500,500, true);
-    initImage(Img, c_white());
-
+    initImage(Img, {0,100,0});
 /*
+
     // Vertices de um cubo
     vec4 P[8] = {
         {0, 0, 0, 1}, {1, 0, 0, 1}, {1, 1, 0, 1}, {0, 1, 0, 1},
@@ -30,11 +30,17 @@ int main()
     // Projection Matrix:
     //mat4 Projection = frustum(-2,2, -2,2, -2,4);
     //mat4 Projection = orthogonal(-2, 2, -2, 2, -3, 3)*perspective(50,Img.width/(float)Img.height , 0.1, 10);
-    mat4 Projection = orthogonal(-2, 2, -2, 2, -2, 2);
+    //mat4 Projection = orthogonal(-2, 2, -2, 2, -2, 2);
+    mat4 Projection = perspective(45, Img.width/(float)Img.height, 0.1, 10);
     // MVP Matrix
     mat4 M = Projection*View*Model;
     vec4 MP[8];
     multMV4(M, P, 8, MP);
+
+    for(int i=0;i<8;i++){
+        //cout << MP[i].x/MP[i].w << ", " << MP[i].y/MP[i].w << ", " << MP[i].z/MP[i].w << " | "<< MP[i].w<< endl;
+    } 
+
 
     draw_elements_lines(Img, MP, indices, 24, c_blue());
 /* 
@@ -48,11 +54,15 @@ int main()
     multMV4(M, P2, 8, MP);
 
     draw_elements_lines(Img, MP, indices, 24, c_green());
+*/
+ 
 
-*/ 
-    int m=50, n=50;
+
+
+ 
+    int m=50, n=30;
     int N = m*n;
-    float u0 = -5, u1 = 5;
+    float u0 = -7, u1 = 7;
 	float du = (u1-u0)/(m-1);
 	
 	float v0 = -5, v1 = 5;
@@ -66,7 +76,7 @@ int main()
             float v = v0 + j*dv;
             int ij = i + j*m;
             P[ij] = {u, v, sin(u*v/4), 1};
-            C[ij] = bilinear((float)i/m, (float)j/n, c_blue(), {0,0,20}, {20,0,0}, c_red());
+            C[ij] = bilinear((float)i/m, (float)j/n, {135,206,250}, {0,191,255}, {240,248,255}, {176,224,230});
             //C[ij] = c_green();
             
         }
@@ -96,30 +106,85 @@ int main()
             indices[k++] = ij+m;
             indices[k++] = ij+m+1;
             indices[k++] = ij+m+1;
-            indices[k++] = ij+1;
-            */
+            indices[k++] = ij+1;*/
+            
+            
             
             
 		}
-	}
+    }
     
-    vec4 MP[n*m];
-    mat4 Model = translate(3,0,-2)*rotate_z(M_PI/2);
-    mat4 View = lookAt({5,5,10}, {0,0,0}, {0,0,1});
-    mat4 Projection = orthogonal(-2, 2, -2, 2, -5, 5)*perspective(50,(float)Img.width/Img.height , 1, 10);//frustum(-2, 2, -2, 2, -3, 3);//orthogonal(-2, 2, -2, 2, -3, 3);//*perspective(50,(float)Img.width/Img.height , 0.1, 10);
+    int N2=8;
+    int Ni2=12*3;
 
+// Vertices de um cubo
+    vec4 P2[8] = {
+        {0, 0, 0, 1}, {2, 0, 0, 1}, {2, 1, 0, 1}, {0, 1, 0, 1},
+        {0, 0, 1, 1}, {2, 0, 1, 1}, {2, 1, 1, 1}, {0, 1, 1, 1},
+    };
+
+    Color C2[8] = {
+        {165,42,42},
+        {255,140,0},
+        {255,255,0},
+        {139,69,19},
+        {160,82,45},
+        {210,105,30},
+        {222,184,135},
+        {240,230,140},
+    };
+    // Arestas do cubo
+    int indices2[12*3] = {
+        0, 1, 4,
+        1, 4, 5,
+        1, 2, 5,
+        2, 5, 6,
+        3, 2, 7,
+        2, 7, 6,
+        0, 3, 4,
+        3, 4, 7,
+        4, 5, 7,
+        5, 6, 7,
+        0, 1, 3,
+        1, 2, 3,
+    };
+
+    vec4 MP[N];
+    mat4 Model = scale(1.5,1,1)*rotate_x(0.1)*translate(5,-0.5,-0.5);
+    mat4 View = lookAt({10,10,10}, {0,0,0}, {0,0,1});
+    //mat4 Projection = frustum(-2,2,-2,2,-3,-6);
+    mat4 Projection = perspective(50,(float)Img.width/Img.height, 0.1, 10);
+    //mat4 Projection = orthogonal(-2, 2, -2, 2, -2, 2);
 
     mat4 M = Projection*View*Model;
     multMV4(M, P, N, MP);
 
-/*    for(int i=0;i<N;i++){
-        cout << MP[i].x/MP[i].w << ", " << MP[i].y/MP[i].w << ", " << MP[i].z/MP[i].w << " | "<< MP[i].w<< endl;
-    } */
+    for(int i=0;i<8;i++){
+        cout << MP[i].x/MP[i].w << ", " << MP[i].y/MP[i].w << ", " << MP[i].z/MP[i].w << " | " << MP[i].w << endl;
+    }
 
     //draw_elements_lines(Img, MP, indices, Ni, c_blue());    
     draw_elements_triangles(Img, MP, indices, Ni, C);
 
-    savePNG("figuras/testeocean3d.png", Img);
+    vec4 MP2[N2];
+    mat4 Model2 = rotate_y(0.2)*rotate_x(0.1)*translate(-0.5,-0.5,-0.5);
+    mat4 View2 = lookAt({1,1,1}, {0,0,0}, {0,0,1});
+    //mat4 Projection = frustum(-2,2,-2,2,-3,-6);
+    //mat4 Projection = perspective(50,(float)Img.width/Img.height, 0.1, 10);
+    mat4 Projection2 = orthogonal(-2, 2, -2, 2, -2, 2);
+
+    mat4 M2 = Projection2*View2*Model2;
+    multMV4(M2, P2, N2, MP2);
+
+    draw_elements_triangles(Img, MP2, indices2, Ni2, C2);
+
+
+    //char filename[20];
+
+    //sprintf(filename, "figuras/barco0%d.png", p);
+
+    savePNG("figuras/barcoimage.png", Img);
+
     freeImage(Img);
 
     return 0;

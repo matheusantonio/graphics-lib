@@ -91,6 +91,7 @@ vec3 normalize(vec3 u);
 // Produto vetorial no R3
 vec3 cross(vec3 u, vec3 v);
 
+Quaternion exp(float e, vec3 u);
 
 // QUARTERNIOS
 // Operação de soma de quartérnios

@@ -433,10 +433,10 @@ float lerpZ(float t, float z1,float z2){
 
 void drawZBuffer(Image I, float x, float y, float z, Color C){
     float *zb = zbuffer(I, x, y); 
-    if( z > *zb){
+    //if( z > *zb){
         draw_pixel(I, x, y, C);
         *zb = z; 
-    }
+    //}
 }
 
 // draw line para vec3
@@ -560,12 +560,13 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
                bari[1] >= 0 && bari[1] <= 1 &&
                bari[2] >= 0 && bari[2] <= 1){
                    Color c = intertri(bari, C[0], C[1], C[2]);
-                   float *zb = zbuffer(img, x, y);
+                   //float *zb = zbuffer(img, x, y);
                    float z = bari[0]*P[0].z + bari[1]*P[1].z + bari[2]*P[2].z;
-                   if(z>*zb){
+                   //cout << "Vou pintar: " << x << ", " << y << ", " << z << " : " << endl;
+                   //if(z>*zb){
                        draw_pixel(img, x, y, c);
-                       *zb = z;
-                   }
+                       //*zb = z;
+                   //}
                }
         }
     }
@@ -574,21 +575,19 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
 int clipline(vec4* A, vec4* B, vec4 n){
 
     float a = dot(*A, n);
-    //if(a<0) return 1;
 
     float t = a/dot((*A-*B), n);
 
     vec4 R = (1-t)* *A + t* *B;
 
-    A = &R;
-
-    /*float b = dot(*B, n);
+    float b = dot(*B, n);
 
     t = b/dot((*A-*B), n);
 
     R = (1-t)* *A + t* *B;
 
-    B = &R;*/
+    A = &R;
+    B = &R;
 
     return 0;
 }
@@ -659,7 +658,23 @@ void draw_elements_line_loop(Image img, vec4* P, int* indices, int n, Color c){
     
 }
 
-int clip_triangle(Image img, vec4 P[3], Color C[3], vec4 n){
+int clip_triangle(Image img, vec4 PolC[3], Color C[3], vec4 n){
+
+/*
+    vec4 P[3][2];
+    for(int i=0;i<3;i++){
+        P[i][0] = {PolC[i].x, PolC[i].y, PolC[i].z, PolC[i].w};
+        if(i==2) P[i][1] = {PolC[0].x, PolC[0].y, PolC[0].z, PolC[0].w};
+        else P[i][1] = {PolC[i+1].x, PolC[i+1].y, PolC[i+1].z, PolC[i+1].w};
+    }
+
+    for(int i=0;i<3;i++){
+        clipline(&P[i][0], &P[i][1], n);
+    }*/
+    
+      
+
+
     return 0;
 }
 
