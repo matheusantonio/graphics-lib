@@ -562,7 +562,7 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
                    Color c = intertri(bari, C[0], C[1], C[2]);
                    //float *zb = zbuffer(img, x, y);
                    float z = bari[0]*P[0].z + bari[1]*P[1].z + bari[2]*P[2].z;
-                   //cout << "Vou pintar: " << x << ", " << y << ", " << z << " : " << endl;
+                   //cout << "Vou pintar: " << x << ", " << y << ", " << z << " : " << xm << "- " << ym << endl;
                    //if(z>*zb){
                        draw_pixel(img, x, y, c);
                        //*zb = z;
@@ -706,6 +706,7 @@ void draw_triangle(Image img, vec4 Pin[3], Color Cin[3]){
         toScreen(img, P[1]),
         toScreen(img, P[2])
     };
+
     draw_triangle(img, P3, C);
 }
 
@@ -742,6 +743,7 @@ void draw_elements_triangles(Image img, vec4* P, int* indices, int n, Color*C){
     for(int i=0;i<(n-2);i+=3){
         vec4 P2[3] = {P[indices[i]], P[indices[i+1]], P[indices[i+2]]};
         Color C2[3] = {C[indices[i]], C[indices[i+1]], C[indices[i+2]]};
+        //cout << "Gonna draw: " << i << endl;
         draw_triangle(img, P2, C2);
     }
 }
