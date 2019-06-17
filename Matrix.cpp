@@ -174,7 +174,7 @@ mat4 lookAt(vec3 O, vec3 C, vec3 Up){
         {0, 0, 0, 1}
     }};
 
-    return inverse(Res);// A*B;
+    return A*B;
 }
 
 mat4 perspective(float teta, float a, float n, float f){

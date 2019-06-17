@@ -100,14 +100,9 @@ int main()
 
     draw_elements_lines(Img, MP, indices, 24, c_green());
 */
- 
-
-
-
- 
-    int m=30, n=30;
+    int m=50, n=50;
     int N = m*n;
-    float u0 = -7, u1 = 7;
+    float u0 = -5, u1 = 5;
 	float du = (u1-u0)/(m-1);
 	
 	float v0 = -5, v1 = 5;
@@ -121,10 +116,7 @@ int main()
             float v = v0 + j*dv;
             int ij = i + j*m;
             P[ij] = {u, v, sin(u*v/4), 1};
-            //cout << u << ", " << v << ", " << sin(u*v/4) << endl;
             C[ij] = bilinear((float)i/m, (float)j/n, {135,206,250}, {0,191,255}, {240,248,255}, {176,224,230});
-            //C[ij] = c_green();
-            
         }
     }
 
@@ -153,10 +145,6 @@ int main()
             indices[k++] = ij+m+1;
             indices[k++] = ij+m+1;
             indices[k++] = ij+1;*/
-            
-            
-            
-            
 		}
     }
     
@@ -196,30 +184,22 @@ int main()
     };
 
     vec4 MP[N];
-    mat4 Model = scale(1.5,1,1)*rotate_x(0.1)*translate(5,-0.5,-0.5);
-    mat4 View = lookAt({10,10,10}, {0,0,0}, {0,0,1});
-    //mat4 Projection = frustum(-2,2,-2,2,-3,-6);
-    mat4 Projection = perspective(50,(float)Img.width/Img.height, 1, 10);
-    //mat4 Projection = orthogonal(-2, 2, -2, 2, -2, 2);
+    mat4 Model = rotate_y(-0.2)*rotate_x(0.3)*translate(-0.5,-0.5,-0.5);
+    mat4 View = lookAt({0,0,15}, {0,0,0}, {0,1,0});
+    mat4 Projection = perspective(50,(float)Img.width/Img.height, 1, 50);
 
     mat4 M = Projection*View*Model;
     multMV4(M, P, N, MP);
 
-    for(int i=0;i<8;i++){
-        //cout << MP[i].x/MP[i].w << ", " << MP[i].y/MP[i].w << ", " << MP[i].z/MP[i].w << " | " << MP[i].w << endl;
-    }
-
     //draw_elements_lines(Img, MP, indices, Ni, c_blue());    
     draw_elements_triangles(Img, MP, indices, Ni, C);
 
+
+
     vec4 MP2[N2];
     mat4 Model2 = rotate_y(0.2)*rotate_x(0.1)*translate(-0.5,-0.5,-0.5);
-    mat4 View2 = lookAt({1,1,1}, {0,0,0}, {0,0,1});
-    //mat4 Projection = frustum(-2,2,-2,2,-3,-6);
-    //mat4 Projection = perspective(50,(float)Img.width/Img.height, 0.1, 10);
-    mat4 Projection2 = orthogonal(-2, 2, -2, 2, -2, 2);
 
-    mat4 M2 = Projection2*View2*Model2;
+    mat4 M2 = Projection*View*Model2;
     multMV4(M2, P2, N2, MP2);
 
     draw_elements_triangles(Img, MP2, indices2, Ni2, C2);
@@ -277,25 +257,12 @@ int main()
     }
 
     vec4 MP3[N3];
-    mat4 Model3 = rotate_z(-0.3)*rotate_y(0.2)*translate(10,0.5,-0.5);
-    mat4 View3 = lookAt({10,10,10}, {0,0,0}, {0,0,1});
-    //mat4 Projection = frustum(-2,2,-2,2,-3,-6);
-    mat4 Projection3 = perspective(50,(float)Img.width/Img.height, 0.1, 10);
-    //mat4 Projection = orthogonal(-2, 2, -2, 2, -2, 2);
+    mat4 Model3 = rotate_z(-0.3)*rotate_y(0.2)*translate(-5,2,-0.5);
 
-    mat4 M3 = Projection3*View3*Model3;
+    mat4 M3 = Projection*View*Model3;
     multMV4(M3, P3, N3, MP3);
 
-    for(int i=0;i<N3;i++){
-        //cout << MP3[i].x/MP3[i].w << ", " << MP3[i].y/MP3[i].w << ", " << MP3[i].z/MP3[i].w << " | " << MP3[i].w << endl;
-    }
-
     draw_elements_triangles(Img, MP3, indices3, Ni3, C3);
-
-
-    //char filename[20];
-
-    //sprintf(filename, "figuras/barco0%d.png", p);
 
     savePNG("figuras/testebarcocoons.png", Img);
 

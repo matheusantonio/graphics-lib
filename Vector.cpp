@@ -135,7 +135,7 @@ vec3 normalize(vec3 u){
 vec3 cross(vec3 u, vec3 v){
     return {
         u.y*v.z - u.z*v.y,
-        u.y*v.x - u.x*v.y,
+        u.x*v.z - u.z*v.x,
         u.x*v.y - u.y*v.x
     };
 }

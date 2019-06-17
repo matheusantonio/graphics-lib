@@ -552,6 +552,7 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
         if(P[i].y < my) my = P[i].y;
         if(P[i].y > ym) ym = P[i].y;
     }
+    //cout << mx << ", " << my << endl;
 
     for(int x=mx; x<=xm; x++){
         for(int y=my; y<=ym; y++){
@@ -707,7 +708,6 @@ void draw_triangle(Image img, vec4 Pin[3], Color Cin[3]){
         toScreen(img, P[1]),
         toScreen(img, P[2])
     };
-
     draw_triangle(img, P3, C);
 }
 

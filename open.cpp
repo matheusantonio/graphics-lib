@@ -39,49 +39,10 @@ void desenha(){
 	//mat4 Projection = orthogonal(-2, 2, -2, 2, -3, 3);
 	mat4 View = lookAt({0, 0, 15}, {0, 0, 0}, {0, 1, 0});
 	mat4 Model = R;
-	
-	float mat[16];
-	float mat2[16];
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(50, aspect, 1, 50);
-	glGetFloatv(GL_PROJECTION_MATRIX, mat2);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(0,0,15,0,0,0,0,1,0);
-	glGetFloatv(GL_MODELVIEW_MATRIX, mat);
 
 	mat4 ModelView = View*Model;
 	mat3 NormalMatrix = transpose(inverse(toMat3(ModelView)));
 	mat4 MVP = Projection*View*Model;
-
-	//=========================================================================================
-
-	std::cout << "Minhas projection e ModelView: " << endl;
-	for(int i=0;i<4;i++){
-		std::cout << Projection.M[i][0] << ", " << Projection.M[i][1] << ", " << Projection.M[i][2] << ", " << Projection.M[i][3] << endl;
-		}
-
-	std::cout << endl;
-	for(int i=0;i<4;i++){
-		std::cout << ModelView.M[i][0] << ", " << ModelView.M[i][1] << ", " << ModelView.M[i][2] << ", " << ModelView.M[i][3] << endl;
-	}
-
-	std::cout << endl;
-
-	cout<< "Projection e ModelView do Opengl: " << endl;
-	for(int i=0;i<16;i+=4){
-		std::cout << mat2[i] << ", " << mat2[i+1] << ", " << mat2[i+2] << ", " << mat2[i+3] << endl;
-	}
-	std::cout << endl;
-
-	for(int i=0;i<16;i+=4){
-		std::cout << mat[i] << ", " << mat[i+1] << ", " << mat[i+2] << ", " << mat[i+3] << endl;
-	}
-
-	//=========================================================================================
 
 	glUniformMatrix4fv(ModelView_location, 1, true, (float*)(&ModelView));
 	glUniformMatrix3fv(NormalMatrix_location, 1, true, (float*)(&NormalMatrix));
@@ -90,6 +51,8 @@ void desenha(){
 	glDrawElements(GL_TRIANGLES, Ni, GL_UNSIGNED_INT, indices);
 
 	glutSwapBuffers();
+
+
 }
 
 // Funcao auxiliar para obter a localizacao de um uniform
