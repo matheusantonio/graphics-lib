@@ -135,14 +135,18 @@ mat4 orthogonal(float l, float r, float b, float t, float n, float f){
 }
 
 mat4 frustum(float l, float r, float b, float t, float n, float f){
-    //float MR[4][4] = {
     return {{
         {-2*n/(r-l), 0, (r+l)/(r-l), 0},
         {0, -2*n/(t-b), (t+b)/(t-b), 0},
         {0, 0, (f+n)/(f-n), 2*n*f/(n-f)},
         {0, 0, -1, 0}
     }};
-    //return rotate(MR);
+    /*/return {{
+        {-2*n/(r-l), 0, (r+l)/(r-l), 0},
+        {0, -2*n/(t-b), (t+b)/(t-b), 0},
+        {0, 0, (f+n)/(f-n), 1},
+        {0, 0, -2*n*f/(n-f), 0}
+    }};*/
 }
 
 mat4 lookAt(vec3 O, vec3 C, vec3 Up){
@@ -162,7 +166,15 @@ mat4 lookAt(vec3 O, vec3 C, vec3 Up){
         {0, 0, 1, -1*O.z}, 
         {0, 0, 0, 1}
     }};
-    return A*B;
+
+    mat4 Res = {{
+        {s.x, u.x, -1*f.x, O.x},
+        {s.y, u.y, -1*f.y, O.y},
+        {s.z, u.z, -1*f.z, O.z},
+        {0, 0, 0, 1}
+    }};
+
+    return inverse(Res);// A*B;
 }
 
 mat4 perspective(float teta, float a, float n, float f){
