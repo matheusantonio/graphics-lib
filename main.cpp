@@ -4,6 +4,7 @@
 #include "Desenho.h"
 #include "Image.h"
 #include "Complexos.h"
+#include "Matrix.h"
 #include <math.h>
 
 float c0(float s){

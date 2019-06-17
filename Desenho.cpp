@@ -4,6 +4,7 @@
 #include "Vector.h"
 #include "Image.h"
 #include "Desenho.h"
+#include "Matrix.h"
 
 using namespace std;
 
