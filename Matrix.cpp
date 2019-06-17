@@ -4,8 +4,19 @@
 // Estrutura para representar matriz de quatro dimensões
 struct mat4;
 
+struct mat3;
 
 // MATRIZ DE QUATRO DIMENSÕES
+
+mat4 operator*(float u, mat4 A){
+    return{{
+        {u*A.M[0][0], u*A.M[0][1], u*A.M[0][2], u*A.M[0][3]},
+        {u*A.M[1][0], u*A.M[1][1], u*A.M[1][2], u*A.M[1][3]},
+        {u*A.M[2][0], u*A.M[2][1], u*A.M[2][2], u*A.M[2][3]},
+        {u*A.M[3][0], u*A.M[3][1], u*A.M[3][2], u*A.M[3][3]},
+    }};
+}
+
 // Multiplicação de matrizes de 4 dimensões
 mat4 operator*(mat4 A, mat4 B){
     /* mat4 C;
@@ -158,4 +169,127 @@ mat4 perspective(float teta, float a, float n, float f){
     float t = n*tan(((teta/180)*M_PI)/2);
     float r = t*a;
     return frustum(-1*r, r, -1*t, t, -n, -f);
+}
+
+mat4 loadIdentity(){
+    return {{
+        {1, 0, 0, 0},
+        {0, 1, 0, 0},
+        {0, 0, 1, 0},
+        {0, 0, 0, 1}
+    }};
+}
+
+mat4 transpose(mat4 M){
+    return {{
+        {M.M[0][0], M.M[1][0], M.M[2][0], M.M[3][0]},
+        {M.M[0][1], M.M[1][1], M.M[2][1], M.M[3][1]},
+        {M.M[0][2], M.M[1][2], M.M[2][2], M.M[3][2]},
+        {M.M[0][3], M.M[1][3], M.M[2][3], M.M[3][3]},
+    }};
+}
+
+mat3 transpose(mat3 M){
+    return {{
+        {M.M[0][0], M.M[1][0], M.M[2][0]},
+        {M.M[0][1], M.M[1][1], M.M[2][1]},
+        {M.M[0][2], M.M[1][2], M.M[2][2]}
+        
+    }};
+}
+
+float cofator(mat4 M, int i, int j){
+    float C[3][3];
+    for (int u=0;u<4;u++){
+        for(int v=0;v<4;v++){
+            if(u!=i && v!=j){
+                if(u>i && v>j){
+                    C[u-1][v-1] = M.M[u][v];
+                } else if(u>i){
+                    C[u-1][v] = M.M[u][v];
+                } else if(v>j){
+                    C[u][v-1] = M.M[u][v];
+                } else{
+                    C[u][v] = M.M[u][v];
+                }
+            }
+        }
+    }
+    float parcel1 = C[0][0]*C[1][1]*C[2][2] + C[0][1]*C[1][2]*C[1][0] + C[0][2]*C[1][0]*C[2][1];
+    float parcel2 = C[0][2]*C[1][1]*C[2][0] + C[0][0]*C[1][2]*C[2][1] + C[0][1]*C[1][0]*C[2][2];
+
+    return pow(-1, i+j)*(parcel1 - parcel2);
+}
+
+mat4 inverse(mat4 M){
+    mat4 C;
+    for(int i=0;i<4;i++){
+        for(int j=0;j<4;j++){
+            C.M[i][j] = cofator(M, i, j);
+        }
+    }
+    float detA =0;
+    for(int i=0;i<4;i++){
+        detA+= C.M[0][i]*M.M[0][i];
+    }
+
+    C = (1/detA)*C;
+
+    return C;
+}
+
+mat3 operator*(float u, mat3 A){
+    return {{
+        {A.M[0][0]*u, A.M[0][1]*u, A.M[0][2]*u},
+        {A.M[1][0]*u, A.M[1][1]*u, A.M[1][2]*u},
+        {A.M[2][0]*u, A.M[2][1]*u, A.M[2][2]*u}
+    }};
+}
+
+
+float cofator(mat3 M, int i, int j){
+    float C[2][2];
+    for (int u=0;u<3;u++){
+        for(int v=0;v<3;v++){
+            if(u!=i && v!=j){
+                if(u>i && v>j){
+                    C[u-1][v-1] = M.M[u][v];
+                } else if(u>i){
+                    C[u-1][v] = M.M[u][v];
+                } else if(v>j){
+                    C[u][v-1] = M.M[u][v];
+                } else{
+                    C[u][v] = M.M[u][v];
+                }
+            }
+        }
+    }
+    float det = C[0][0]*C[1][1] - C[0][1]*C[1][0];
+
+    return pow(-1, i+j)*(det);
+}
+
+mat3 inverse(mat3 M){
+    mat3 C;
+    for(int i=0;i<3;i++){
+        for(int j=0;j<3;j++){
+            C.M[i][j] = cofator(M, i, j);
+        }
+    }
+    float detA =0;
+    for(int i=0;i<3;i++){
+        detA+= C.M[0][i]*M.M[0][i];
+    }
+
+    C = (1/detA)*C;
+
+    return C;
+}
+
+mat3 toMat3(mat4 M){
+    return {{
+        {M.M[0][0], M.M[0][1], M.M[0][2]},
+        {M.M[1][0], M.M[1][1], M.M[1][2]},
+        {M.M[2][0], M.M[2][1], M.M[2][2]}
+    }};
 }

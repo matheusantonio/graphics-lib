@@ -8,7 +8,13 @@ struct mat4{
     float M[4][4];
 };
 
+struct mat3{
+    float M[3][3];
+};
+
 // MATRIZ DE QUATRO DIMENSÕES
+mat4 operator*(float u, mat4 A);
+
 // Multiplicação de matrizes de 4 dimensões
 mat4 operator*(mat4 A, mat4 B);
 
@@ -44,6 +50,22 @@ mat4 lookAt(vec3 O, vec3 C, vec3 Up);
 // Define o volume de frustum a partir da perspectiva dada
 mat4 perspective(float teta, float a, float n, float f);
 
+mat4 loadIdentity();
 
+mat4 transpose(mat4 M);
+
+mat4 inverse(mat4 M);
+
+// mat3
+
+mat3 operator*(float u, mat3 A);
+
+float cofator(mat3 M, int i, int j);
+
+mat3 inverse(mat3 M);
+
+mat3 transpose(mat3 M);
+
+mat3 toMat3(mat4 M);
 
 #endif
