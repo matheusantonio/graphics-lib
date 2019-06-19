@@ -9,7 +9,7 @@
 #include "Color.h"
 #include "Matrix.h"
 #include "Quaternions.h"
-
+/* 
 // Controle da rotacao
 int last_x, last_y;
 mat4 R = loadIdentity();
@@ -21,10 +21,10 @@ int MVP_location, ModelView_location, NormalMatrix_location;
 // Variaveis da superficie
 const int m = 50, n = 50;
 const int N = m*n;
-vec4 P[N];
-vec3 Normal[N];
+//vec4 P[N];
+//vec3 Normal[N];
 const int Ni = 6*(m-1)*(n-1);
-int indices[Ni];
+//int indices[Ni];
 
 void desenha(){
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	
@@ -48,7 +48,35 @@ void desenha(){
 	glUniformMatrix3fv(NormalMatrix_location, 1, true, (float*)(&NormalMatrix));
 	glUniformMatrix4fv(MVP_location, 1, true, (float*)(&MVP));
 
-	glDrawElements(GL_TRIANGLES, Ni, GL_UNSIGNED_INT, indices);
+	vec4 P[8] = {
+		{0, 0, 0, 1},	{1, 0, 0, 1},	{1, 1, 0, 1},	{0, 1, 0, 1},
+		{0, 0, 1, 1},	{1, 0, 1, 1},	{1, 1, 1, 1},	{0, 1, 1, 1},
+	};
+	
+	int indices[36] = {
+		0, 2, 1,	0, 3, 2, // back
+ 		4, 5, 7,	5, 6, 7, // front
+		5, 1, 6,	1, 2, 6, // right
+		0, 4, 3,	4, 7, 3, // left
+		0, 1, 4,	1, 5, 4, // down
+		2, 3, 6,	3, 7, 6  // up
+	};
+	
+	Color darkred = {70, 50, 50};
+	Color red = c_red();
+	Color C[] = {
+		red, red, red, red,
+		darkred, darkred, darkred, darkred
+	};
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(4, GL_FLOAT, 0, P);
+
+	glEnableClientState(GL_COLOR_ARRAY);
+	glColorPointer(3, GL_UNSIGNED_BYTE, 0, C);
+
+	
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, indices);
 
 	glutSwapBuffers();
 
@@ -80,7 +108,7 @@ void initLight(){
 	glUniform4fv(location("light"),  4, light);
 }
 
-void initSurface(){
+/*void initSurface(){
 	float u0 = -5, u1 = 5;
 	float du = (u1-u0)/(m-1);
 	
@@ -122,6 +150,7 @@ void initSurface(){
 	glNormalPointer(GL_FLOAT, 0, Normal);
 }
 
+
 void mouse(int button, int state, int x, int y){
 	last_x = x;
 	last_y = y;
@@ -152,7 +181,7 @@ void init(){
 
 	initMaterial();
 	initLight();
-	initSurface();
+	//initSurface();
 }
 
 int main(int argc, char* argv[]){
@@ -168,13 +197,17 @@ int main(int argc, char* argv[]){
 	init();
 	glutMainLoop();
 }
-
-/* 
+*/
+ 
 
 int last_x, last_y;
 Quaternion Q = {1, 0, 0, 0};
 
+int MVP_location, ModelView_location, NormalMatrix_location;
+
 unsigned int shaderProgram;
+
+mat4 R = loadIdentity();
 
 void desenha(){
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	
@@ -186,22 +219,45 @@ void desenha(){
 	int h = glutGet(GLUT_WINDOW_HEIGHT);
 	float aspect = (float)w/(float)h;
 	gluPerspective(50, aspect, 1, 10);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	gluLookAt(0, 0, 4, 0, 0, 0, 0, 2, 0);
-	glRotatef(2*acos(Q.a)*180/M_PI, Q.b, Q.c, Q.d);
+	mat4 Projection = perspective(50, aspect, 1, 10);
 	
-	glCullFace(GL_FRONT);
-	glUseProgram(0);
-	glColor3f(0, 0, 0);
-	glLineWidth(5);
-	glPolygonMode(GL_BACK, GL_LINE);
-	//glutSolidTorus(0.4, 1.5, 50, 50); 
-	glFrontFace(GL_CW);
-	glutSolidTeapot(1);
+	float mat[16];
+	for(int i=0;i<4;i++){
+		cout << Projection.M[i][0] << ", "<< Projection.M[i][1] << ", "<< Projection.M[i][2] << ", "<< Projection.M[i][3] << endl;
+	}
 
-	glCullFace(GL_BACK);
+	glGetFloatv(GL_PROJECTION_MATRIX, mat);
+
+	cout << endl;
+	for(int i=0;i<16;i+=4){
+		cout << mat[i] << ", "<< mat[i+1] << ", "<< mat[i+2] << ", "<< mat[i+3] << endl;
+	}
+	
+	
+	mat4 View = lookAt({0, 0, 6}, {0, 0, 0}, {0, 2, 0});
+	float teta = 2*acos(Q.a)*180/M_PI;
+	//mat4 Model = rotate_x(Q.b*teta)*rotate_y(Q.c*teta)*rotate_z(Q.d*teta);
+	mat4 Model = R;
+
+	mat4 MVP = Projection*View*Model;
+
+	glUniformMatrix4fv(MVP_location, 1, true, (float*)(&MVP));
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
+	//gluLookAt(0, 0, 4, 0, 0, 0, 0, 2, 0);
+	//glRotatef(2*acos(Q.a)*180/M_PI, Q.b, Q.c, Q.d);
+
+
+	//glCullFace(GL_FRONT);
+	//glUseProgram(shaderProgram);
+	//glColor3f(0, 0, 0);
+	//glLineWidth(5);
+	//glPolygonMode(GL_BACK, GL_LINE);
+	//glutSolidTorus(0.4, 1.5, 50, 50); 
+	//glFrontFace(GL_CW);
+	//glutSolidTeapot(1);
+
+	//glCullFace(GL_BACK);
 	glUseProgram(shaderProgram);
 	//glutSolidTorus(0.4, 1.5, 50, 50); 
 	glutSolidTeapot(1);
@@ -262,6 +318,7 @@ void mouseMotion(int x, int y){
 	vec3 u = {0, 1, 0};
 	vec3 v = {1, 0, 0};
 	Q = exp(dx*0.01, u)*exp(dy*0.01, v)*Q;
+	R = rotate_y(dx*0.01)*rotate_x(dy*0.01)*R;
 
 	last_x = x;
 	last_y = y;	
@@ -280,4 +337,4 @@ int main(int argc, char* argv[]){
 
 	init();
 	glutMainLoop();
-}*/
+}

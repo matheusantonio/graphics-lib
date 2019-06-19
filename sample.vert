@@ -10,8 +10,5 @@ uniform mat3 NormalMatrix;
 void main(){
 	v = vec3(ModelView*gl_Vertex);
 	normal = NormalMatrix*gl_Normal;
-
-	
-
 	gl_Position = MVP*gl_Vertex;
 } 

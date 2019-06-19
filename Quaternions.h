@@ -18,4 +18,6 @@ Quaternion operator+(Quaternion q1, Quaternion q2);
 // Operação de multiplicação de um quartérnio por um escalar
 Quaternion operator*(float alpha, Quaternion q1);
 
+Quaternion operator*(Quaternion q1, Quaternion q2);
+
 #endif

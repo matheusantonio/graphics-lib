@@ -167,13 +167,6 @@ mat4 lookAt(vec3 O, vec3 C, vec3 Up){
         {0, 0, 0, 1}
     }};
 
-    mat4 Res = {{
-        {s.x, u.x, -1*f.x, O.x},
-        {s.y, u.y, -1*f.y, O.y},
-        {s.z, u.z, -1*f.z, O.z},
-        {0, 0, 0, 1}
-    }};
-
     return A*B;
 }
 
