@@ -2,13 +2,17 @@
 
 in vec3 v;
 in vec3 normal;
+in vec3 tangent;
+in vec3 bitangent;
 in vec2 texCoord;
+in mat3 NM;
 
 uniform sampler2D texture0;
 uniform sampler2D texture1;
 
 uniform sampler2D diffuse_map;
 uniform sampler2D specular_map;
+uniform sampler2D normal_map;
 
 out vec4 FragColor;
 
@@ -55,8 +59,21 @@ void main(){
 
 	vec4 diff = texture(diffuse_map, texCoord);
 	vec4 spec = texture(specular_map, texCoord);
+	vec3 norm = texture(normal_map, texCoord).rgb;
+
+	norm = NM*(2*norm-1);
+
+
+
+	//vec3 N = normalize(normal);
+	//vec3 N = normalize(norm);
 	
 	vec3 N = normalize(normal);
+	vec3 T = normalize(tangent);
+	vec3 B = normalize(bitangent);
+	mat3 TBN = mat3(T, B, N);
+	N = normalize(TBN*norm);
+	
 	vec4 ambient = material[0]*light[0];
 
 	// Verificando se é luz direcional ou fixa

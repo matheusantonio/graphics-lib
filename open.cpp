@@ -6,6 +6,15 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+
+struct Vertex{
+	vec4 position;
+	vec3 normal;
+	vec3 tangent;
+	vec3 bitangent;
+	vec2 texCoord;
+};
+
 // Controle da rotacao
 int last_x, last_y;
 mat4 R = loadIdentity();
@@ -55,12 +64,12 @@ int location(const char* var){
 
 void initMaterial(){
 	float material[] = {
-	 0.2, 0.2, 0.2, 1.0, // ambient
+	 0.1, 0.1, 0.1, 1.0, // ambient
 	 1.0, 1.0, 1.0, 1.0, // diffuse
-	 1.0, 1.0, 1.0, 1.0, // specular
+	 0.2, 0.2, 0.2, 1.0, // specular
 	};
 	glUniform4fv(location("material"),  3, material);
-	glUniform1f(location("shininess"), 10.0);
+	glUniform1f(location("shininess"), 100.0);
 }
 
 void initLight(){
@@ -73,7 +82,17 @@ void initLight(){
 	glUniform4fv(location("light"),  4, light);
 }
 
+void VertexAttribPointer(const char* var, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid* pointer){
+	int location = glGetAttribLocation(shaderProgram, var);
+	glVertexAttribPointer(location, size, type, normalized, stride, pointer);
+	glEnableVertexAttribArray(location);
+}
+
+
 void initSurface(){
+
+	Vertex V[N];
+
 	float u0 = -5, u1 = 5;
 	float du = (u1-u0)/(m-1);
 	
@@ -92,6 +111,13 @@ void initSurface(){
 			
 			Normal[ij] = normalize(cross(Su, Sv));
 			TexCoord[ij] = {i/(m-1.0f), j/(n-1.0f)};
+
+			V[ij].position = {u, v, sin(u*v/4), 1};;
+			V[ij].normal = normalize(cross(Su, Sv));
+			V[ij].tangent = normalize(Su);
+			V[ij].bitangent = normalize(Sv);
+			V[ij].normal = normalize(cross(Su, Sv));
+			V[ij].texCoord = {i/(m-1.0f), j/(n-1.0f)};
 		}
 	}
 	
@@ -109,14 +135,23 @@ void initSurface(){
 		}
 	}
 	
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(4, GL_FLOAT, 0, P);
-	
-	glEnableClientState(GL_NORMAL_ARRAY);
-	glNormalPointer(GL_FLOAT, 0, Normal);
+	//glEnableClientState(GL_VERTEX_ARRAY);
+	//glVertexPointer(4, GL_FLOAT, 0, P);
+	VertexAttribPointer("Vertex", 4, GL_FLOAT, GL_FALSE, 0, P);
+	//VertexAttribPointer("Vertex", 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), &V[0].position);
 
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glTexCoordPointer(2, GL_FLOAT, 0, TexCoord);
+	//glEnableClientState(GL_NORMAL_ARRAY);
+	//glNormalPointer(GL_FLOAT, 0, Normal);
+	VertexAttribPointer("Normal", 3, GL_FLOAT, GL_FALSE, 0, Normal);
+	//VertexAttribPointer("Normal", 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), &V[0].normal);
+	
+	VertexAttribPointer("Tangent", 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), &V[0].tangent);
+	VertexAttribPointer("Bitangent", 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), &V[0].bitangent);
+
+	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	//glTexCoordPointer(2, GL_FLOAT, 0, TexCoord);
+	VertexAttribPointer("TexCoord", 2, GL_FLOAT, GL_FALSE, 0, TexCoord);
+	//VertexAttribPointer("TexCoord", 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), &V[0].texCoord);
 }
 
 unsigned int loadTexture(const char* filename){
@@ -144,13 +179,17 @@ void initTexture(){
 	loadTexture("shrek.jpg");
 
 	glActiveTexture(GL_TEXTURE2);
-	loadTexture("box.png");
+	loadTexture("brickwall.jpg");
 
 	glActiveTexture(GL_TEXTURE3);
 	loadTexture("box2.png");
 
+	glActiveTexture(GL_TEXTURE4);
+	loadTexture("brickwall_normal.jpg");
+
 	glUniform1i(location("diffuse_map"), 2);
 	glUniform1i(location("specular_map"), 3);
+	glUniform1i(location("normal_map"), 4);
 	glUniform1i(location("texture0"), 0);
 	glUniform1i(location("texture1"), 1);
 }
