@@ -1,15 +1,11 @@
-//g++ -o main main.cpp -lglut -lGLU -lGL -lGLEW -lXmu -lXext -lX11 -lm
 #include <GL/glew.h>
 #include <GL/glut.h>
-
 #include "cguff.h"
-#include <math.h>
-#include<iostream>
-#include "Vector.h"
-#include "Color.h"
 #include "Matrix.h"
-#include "Quaternions.h"
-/* 
+#include <cmath>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 // Controle da rotacao
 int last_x, last_y;
 mat4 R = loadIdentity();
@@ -21,10 +17,11 @@ int MVP_location, ModelView_location, NormalMatrix_location;
 // Variaveis da superficie
 const int m = 50, n = 50;
 const int N = m*n;
-//vec4 P[N];
-//vec3 Normal[N];
+vec4 P[N];
+vec3 Normal[N];
+vec2 TexCoord[N];
 const int Ni = 6*(m-1)*(n-1);
-//int indices[Ni];
+int indices[Ni];
 
 void desenha(){
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	
@@ -35,11 +32,9 @@ void desenha(){
 	float aspect = (float)w/(float)h;
 	
 	mat4 Projection = scale(1, 1, -1)*perspective(50, aspect, 1, 50);
-	//mat4 Projection = perspective(50, aspect, 1, 50);
-	//mat4 Projection = orthogonal(-2, 2, -2, 2, -3, 3);
 	mat4 View = lookAt({0, 0, 15}, {0, 0, 0}, {0, 1, 0});
 	mat4 Model = R;
-
+	
 	mat4 ModelView = View*Model;
 	mat3 NormalMatrix = transpose(inverse(toMat3(ModelView)));
 	mat4 MVP = Projection*View*Model;
@@ -48,39 +43,9 @@ void desenha(){
 	glUniformMatrix3fv(NormalMatrix_location, 1, true, (float*)(&NormalMatrix));
 	glUniformMatrix4fv(MVP_location, 1, true, (float*)(&MVP));
 
-	vec4 P[8] = {
-		{0, 0, 0, 1},	{1, 0, 0, 1},	{1, 1, 0, 1},	{0, 1, 0, 1},
-		{0, 0, 1, 1},	{1, 0, 1, 1},	{1, 1, 1, 1},	{0, 1, 1, 1},
-	};
-	
-	int indices[36] = {
-		0, 2, 1,	0, 3, 2, // back
- 		4, 5, 7,	5, 6, 7, // front
-		5, 1, 6,	1, 2, 6, // right
-		0, 4, 3,	4, 7, 3, // left
-		0, 1, 4,	1, 5, 4, // down
-		2, 3, 6,	3, 7, 6  // up
-	};
-	
-	Color darkred = {70, 50, 50};
-	Color red = c_red();
-	Color C[] = {
-		red, red, red, red,
-		darkred, darkred, darkred, darkred
-	};
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(4, GL_FLOAT, 0, P);
-
-	glEnableClientState(GL_COLOR_ARRAY);
-	glColorPointer(3, GL_UNSIGNED_BYTE, 0, C);
-
-	
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, indices);
+	glDrawElements(GL_TRIANGLES, Ni, GL_UNSIGNED_INT, indices);
 
 	glutSwapBuffers();
-
-
 }
 
 // Funcao auxiliar para obter a localizacao de um uniform
@@ -91,24 +56,24 @@ int location(const char* var){
 void initMaterial(){
 	float material[] = {
 	 0.2, 0.2, 0.2, 1.0, // ambient
-	 0.0, 0.5, 1.0, 1.0, // diffuse
+	 1.0, 1.0, 1.0, 1.0, // diffuse
 	 1.0, 1.0, 1.0, 1.0, // specular
 	};
 	glUniform4fv(location("material"),  3, material);
-	glUniform1f(location("shininess"), 40.0);
+	glUniform1f(location("shininess"), 10.0);
 }
 
 void initLight(){
 	float light[] = {
 		 1.0, 1.0, 1.0, 1.0, // ambient
-		 1.0, 1.0, 0.5, 1.0, // diffuse
+		 1.0, 1.0, 1.0, 1.0, // diffuse
 		 1.0, 1.0, 1.0, 1.0, // specular
 		 1.0, 1.0, 1.0, 0.0, // position
 	};
 	glUniform4fv(location("light"),  4, light);
 }
 
-/*void initSurface(){
+void initSurface(){
 	float u0 = -5, u1 = 5;
 	float du = (u1-u0)/(m-1);
 	
@@ -126,6 +91,7 @@ void initLight(){
 			vec3 Sv = {0, 1, cos(u*v/4)*u/4};
 			
 			Normal[ij] = normalize(cross(Su, Sv));
+			TexCoord[ij] = {i/(m-1.0f), j/(n-1.0f)};
 		}
 	}
 	
@@ -148,8 +114,46 @@ void initLight(){
 	
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glNormalPointer(GL_FLOAT, 0, Normal);
+
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexCoordPointer(2, GL_FLOAT, 0, TexCoord);
 }
 
+unsigned int loadTexture(const char* filename){
+	unsigned int texture;
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char* data = stbi_load(filename, &width, &height, &nrChannels, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+	stbi_image_free(data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	return texture;
+}
+
+void initTexture(){
+	glActiveTexture(GL_TEXTURE0);
+	loadTexture("bob.jpg");
+
+	glActiveTexture(GL_TEXTURE1);
+	loadTexture("shrek.jpg");
+
+	glActiveTexture(GL_TEXTURE2);
+	loadTexture("box.png");
+
+	glActiveTexture(GL_TEXTURE3);
+	loadTexture("box2.png");
+
+	glUniform1i(location("diffuse_map"), 2);
+	glUniform1i(location("specular_map"), 3);
+	glUniform1i(location("texture0"), 0);
+	glUniform1i(location("texture1"), 1);
+}
 
 void mouse(int button, int state, int x, int y){
 	last_x = x;
@@ -181,154 +185,14 @@ void init(){
 
 	initMaterial();
 	initLight();
-	//initSurface();
+	initSurface();
+	initTexture();
 }
 
 int main(int argc, char* argv[]){
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
 	int w = 400, h = 400;
-	glutInitWindowSize(w, h);
-	glutCreateWindow("janela");
-	glutDisplayFunc(desenha);
-	glutMouseFunc(mouse);
-	glutMotionFunc(mouseMotion);
-
-	init();
-	glutMainLoop();
-}
-*/
- 
-
-int last_x, last_y;
-Quaternion Q = {1, 0, 0, 0};
-
-int MVP_location, ModelView_location, NormalMatrix_location;
-
-unsigned int shaderProgram;
-
-mat4 R = loadIdentity();
-
-void desenha(){
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	int w = glutGet(GLUT_WINDOW_WIDTH);
-	int h = glutGet(GLUT_WINDOW_HEIGHT);
-	float aspect = (float)w/(float)h;
-	gluPerspective(50, aspect, 1, 10);
-	mat4 Projection = perspective(50, aspect, 1, 10);
-	
-	float mat[16];
-	for(int i=0;i<4;i++){
-		cout << Projection.M[i][0] << ", "<< Projection.M[i][1] << ", "<< Projection.M[i][2] << ", "<< Projection.M[i][3] << endl;
-	}
-
-	glGetFloatv(GL_PROJECTION_MATRIX, mat);
-
-	cout << endl;
-	for(int i=0;i<16;i+=4){
-		cout << mat[i] << ", "<< mat[i+1] << ", "<< mat[i+2] << ", "<< mat[i+3] << endl;
-	}
-	
-	
-	mat4 View = lookAt({0, 0, 6}, {0, 0, 0}, {0, 2, 0});
-	float teta = 2*acos(Q.a)*180/M_PI;
-	//mat4 Model = rotate_x(Q.b*teta)*rotate_y(Q.c*teta)*rotate_z(Q.d*teta);
-	mat4 Model = R;
-
-	mat4 MVP = Projection*View*Model;
-
-	glUniformMatrix4fv(MVP_location, 1, true, (float*)(&MVP));
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
-	//gluLookAt(0, 0, 4, 0, 0, 0, 0, 2, 0);
-	//glRotatef(2*acos(Q.a)*180/M_PI, Q.b, Q.c, Q.d);
-
-
-	//glCullFace(GL_FRONT);
-	//glUseProgram(shaderProgram);
-	//glColor3f(0, 0, 0);
-	//glLineWidth(5);
-	//glPolygonMode(GL_BACK, GL_LINE);
-	//glutSolidTorus(0.4, 1.5, 50, 50); 
-	//glFrontFace(GL_CW);
-	//glutSolidTeapot(1);
-
-	//glCullFace(GL_BACK);
-	glUseProgram(shaderProgram);
-	//glutSolidTorus(0.4, 1.5, 50, 50); 
-	glutSolidTeapot(1);
-	glutSwapBuffers();
-}
-
-void init(){
-	glewInit();
-	shaderProgram = cguff::createShaderProgram(
-			"sample05.vert", 
-			"sample05.frag");
-	glUseProgram(shaderProgram);
-	
-	glEnable(GL_DEPTH_TEST); 
-	glEnable(GL_CULL_FACE);
-	
-	float zero[] = {0, 0, 0, 1};
-	float mat_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
-	float mat_diffuse[] = { 0.0, 0.5, 1.0, 1.0 };
-	float mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	float mat_shininess[] = { 20.0 };
-	
-	unsigned int loc;
-       
-	loc = glGetUniformLocation(shaderProgram, "mat_ambient");
-	glUniform4fv(loc, 1, mat_ambient);
-	loc = glGetUniformLocation(shaderProgram, "mat_diffuse");
-	glUniform4fv(loc, 1, mat_diffuse);
-	loc = glGetUniformLocation(shaderProgram, "mat_specular");
-	glUniform4fv(loc, 1, mat_specular);
-	loc = glGetUniformLocation(shaderProgram, "mat_shininess");
-	glUniform1fv(loc, 1, mat_shininess);
-
-	float light_position[] = { 1.0, 1.0, 1.0, 0.0 };
-	float light_ambient[] = { 1.0, 1.0, 1.0, 1.0 };
-	float light_diffuse[] = { 1.0, 1.0, 0.5, 1.0 };
-	float light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-
-	loc = glGetUniformLocation(shaderProgram, "light_position");
-	glUniform4fv(loc, 1, light_position);
-	loc = glGetUniformLocation(shaderProgram, "light_ambient");
-	glUniform4fv(loc, 1, light_ambient);
-	loc = glGetUniformLocation(shaderProgram, "light_diffuse");
-	glUniform4fv(loc, 1, light_diffuse);
-	loc = glGetUniformLocation(shaderProgram, "light_specular");
-	glUniform4fv(loc, 1, light_specular);
-}
-
-void mouse(int button, int state, int x, int y){
-	last_x = x;
-	last_y = y;
-}
-
-void mouseMotion(int x, int y){
-	int dx = x - last_x;
-	int dy = y - last_y;
-
-	vec3 u = {0, 1, 0};
-	vec3 v = {1, 0, 0};
-	Q = exp(dx*0.01, u)*exp(dy*0.01, v)*Q;
-	R = rotate_y(dx*0.01)*rotate_x(dy*0.01)*R;
-
-	last_x = x;
-	last_y = y;	
-	glutPostRedisplay();
-}
-
-int main(int argc, char* argv[]){
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
-	int w = 800, h = 600;
 	glutInitWindowSize(w, h);
 	glutCreateWindow("janela");
 	glutDisplayFunc(desenha);
