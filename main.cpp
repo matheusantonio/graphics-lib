@@ -8,19 +8,27 @@
 #include <math.h>
 
 float c0(float s){
-    return -1*s*s/2;
+    return 2*s*s -s;
+}
+
+float c1(float s){
+    return 4*s*s + s;
 }
 
 float d0(float t){
-    return -1*t*t/3;
+    return cos(t);
+}
+
+float d1(float t){
+    return sin(t);
 }
 
 float Lc(float s, float t){
-    return (1-t)*c0(s) + t*c0(s);
+    return (1-t)*c0(s) + t*c1(s);
 }
 
 float Ld(float s, float t){
-    return (1-s)*d0(t) + s*d0(t);
+    return (1-s)*d0(t) + s*d1(t);
 }
 
 float b(float s, float t){
@@ -53,53 +61,8 @@ vec4 bez(float u, float v, int n, int m, vec4 P[]){
 int main()
 {
     Image Img = newImage(500,500, true);
-    initImage(Img, {0,100,0});
-/*
+    initImage(Img, {0,191,255});
 
-    // Vertices de um cubo
-    vec4 P[8] = {
-        {0, 0, 0, 1}, {1, 0, 0, 1}, {1, 1, 0, 1}, {0, 1, 0, 1},
-        {0, 0, 1, 1}, {1, 0, 1, 1}, {1, 1, 1, 1}, {0, 1, 1, 1},
-    };
-    // Arestas do cubo
-    int indices[24] = {
-        0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6,
-        6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7
-    };
-
-    // Model Matrix
-    mat4 Model = rotate_y(0.2)*rotate_x(0.1)*translate(-0.5, -0.5, -0.5);
-    // View Matrix
-    mat4 View = translate(0, 0, -2);
-    //mat4 View = lookAt({1,1,1}, {0,0,0}, {0,2,0});
-    // Projection Matrix:
-    //mat4 Projection = frustum(-2,2, -2,2, -2,4);
-    //mat4 Projection = orthogonal(-2, 2, -2, 2, -3, 3)*perspective(50,Img.width/(float)Img.height , 0.1, 10);
-    //mat4 Projection = orthogonal(-2, 2, -2, 2, -2, 2);
-    mat4 Projection = perspective(45, Img.width/(float)Img.height, 0.1, 10);
-    // MVP Matrix
-    mat4 M = Projection*View*Model;
-    vec4 MP[8];
-    multMV4(M, P, 8, MP);
-
-    for(int i=0;i<8;i++){
-        //cout << MP[i].x/MP[i].w << ", " << MP[i].y/MP[i].w << ", " << MP[i].z/MP[i].w << " | "<< MP[i].w<< endl;
-    } 
-
-
-    draw_elements_lines(Img, MP, indices, 24, c_blue());
-/* 
-    vec4 P2[8] = {
-        {0, 0, 0, 1}, {1, 0, 0, 1}, {1, 1, 0, 1}, {0, 1, 0, 1},
-        {0, 0, 0.2, 1}, {1, 0, 0.2, 1}, {1, 1, 0.2, 1}, {0, 1, 0.2, 1},
-    };
-
-    Model = rotate_y(0.5)*rotate_x(0.2)*translate(0, 0, -0.5);
-    M = Projection*View*Model;
-    multMV4(M, P2, 8, MP);
-
-    draw_elements_lines(Img, MP, indices, 24, c_green());
-*/
     int m=50, n=50;
     int N = m*n;
     float u0 = -5, u1 = 5;
@@ -116,7 +79,7 @@ int main()
             float v = v0 + j*dv;
             int ij = i + j*m;
             P[ij] = {u, v, sin(u*v/4), 1};
-            C[ij] = bilinear((float)i/m, (float)j/n, {135,206,250}, {0,191,255}, {240,248,255}, {176,224,230});
+            C[ij] = bilinear((float)i/m, (float)j/n, {32,178,170}, {30,144,255},{25,25,112}, {0,0,128});
         }
     }
 
@@ -134,17 +97,6 @@ int main()
 			indices[k++] = ij+m+1;
 			indices[k++] = ij+m;
 			indices[k++] = ij+1;
-            
-            /*indices[k++] = ij;
-            indices[k++] = ij+1;
-            indices[k++] = ij;
-            indices[k++] = ij+m;
-            indices[k++] = ij+m;
-            indices[k++] = ij+1;
-            indices[k++] = ij+m;
-            indices[k++] = ij+m+1;
-            indices[k++] = ij+m+1;
-            indices[k++] = ij+1;*/
 		}
     }
     
@@ -184,7 +136,7 @@ int main()
     };
 
     vec4 MP[N];
-    mat4 Model = rotate_y(-0.2)*rotate_x(0.3)*translate(-0.5,-0.5,-0.5);
+    mat4 Model = scale(1.6,1,1)*rotate_x(-0.5)*translate(0,-2.5,0);
     mat4 View = lookAt({0,0,15}, {0,0,0}, {0,1,0});
     mat4 Projection = perspective(50,(float)Img.width/Img.height, 1, 50);
 
@@ -194,15 +146,13 @@ int main()
     //draw_elements_lines(Img, MP, indices, Ni, c_blue());    
     draw_elements_triangles(Img, MP, indices, Ni, C);
 
-
-
     vec4 MP2[N2];
     mat4 Model2 = rotate_y(0.2)*rotate_x(0.1)*translate(-0.5,-0.5,-0.5);
 
     mat4 M2 = Projection*View*Model2;
     multMV4(M2, P2, N2, MP2);
 
-    draw_elements_triangles(Img, MP2, indices2, Ni2, C2);
+    //draw_elements_triangles(Img, MP2, indices2, Ni2, C2);
 
 
     //============
@@ -235,7 +185,7 @@ int main()
             P3[ij] = {u, v, uv, 1};
             //P3[ij] = bez(u, v, n3, m3, Pc);
             //cout << u << ", " << v << ", " << uv << endl;
-            C3[ij] = bilinear((float)i/m3, (float)j/n3, {0,0,0},{160,82,45},{255,255,0},{222,184,135});
+            C3[ij] = bilinear((float)i/m3, (float)j/n3, {0,0,0},{0,100,0},{34,139,34},{173,255,47});
         }
     }
 
@@ -257,7 +207,7 @@ int main()
     }
 
     vec4 MP3[N3];
-    mat4 Model3 = rotate_z(-0.3)*rotate_y(0.2)*translate(-5,2,-0.5);
+    mat4 Model3 = scale(0.5, 0.5, 1);
 
     mat4 M3 = Projection*View*Model3;
     multMV4(M3, P3, N3, MP3);
