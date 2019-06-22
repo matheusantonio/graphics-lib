@@ -8,7 +8,7 @@
 
 
 struct Vertex{
-	vec4 position;
+	vec3 position;
 	vec3 normal;
 	vec3 tangent;
 	vec3 bitangent;
@@ -32,6 +32,13 @@ vec2 TexCoord[N];
 const int Ni = 6*(m-1)*(n-1);
 int indices[Ni];
 
+GLuint vao_surface;
+
+void draw_surface(){
+	glBindVertexArray(vao_surface);
+	glDrawElements(GL_TRIANGLES,Ni, GL_UNSIGNED_INT, 0);
+}
+
 void desenha(){
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -52,7 +59,8 @@ void desenha(){
 	glUniformMatrix3fv(NormalMatrix_location, 1, true, (float*)(&NormalMatrix));
 	glUniformMatrix4fv(MVP_location, 1, true, (float*)(&MVP));
 
-	glDrawElements(GL_TRIANGLES, Ni, GL_UNSIGNED_INT, indices);
+	//glDrawElements(GL_TRIANGLES, Ni, GL_UNSIGNED_INT, indices);
+	draw_surface();
 
 	glutSwapBuffers();
 }
@@ -106,13 +114,14 @@ void initSurface(){
 		
 			int ij = i + j*m;
 			P[ij] = {u, v, sin(u*v/4), 1};
+			
 			vec3 Su = {1, 0, cos(u*v/4)*v/4};
 			vec3 Sv = {0, 1, cos(u*v/4)*u/4};
 			
 			Normal[ij] = normalize(cross(Su, Sv));
 			TexCoord[ij] = {i/(m-1.0f), j/(n-1.0f)};
 
-			V[ij].position = {u, v, sin(u*v/4), 1};;
+			V[ij].position = {u, v, sin(u*v/4)};;
 			V[ij].normal = normalize(cross(Su, Sv));
 			V[ij].tangent = normalize(Su);
 			V[ij].bitangent = normalize(Sv);
@@ -134,23 +143,54 @@ void initSurface(){
 			indices[k++] = ij+1;
 		}
 	}
-	
+	// vao e vbo
+	glGenVertexArrays(1, &vao_surface);
+	glBindVertexArray(vao_surface);
+
+	GLuint vbo;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, N*sizeof(Vertex), V, GL_STATIC_DRAW);
+
+	unsigned long offset = 0;
+	VertexAttribPointer("Vertex", 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+
+	offset += sizeof(V[0].position);
+	VertexAttribPointer("Normal", 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offset);
+
+	offset += sizeof(V[0].normal);
+	VertexAttribPointer("Tangent", 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offset);
+
+	offset+= sizeof(V[0].tangent);
+	VertexAttribPointer("Bitangent", 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offset);
+
+	offset+= sizeof(V[0].bitangent);
+	VertexAttribPointer("TexCoord", 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offset);
+
+	GLuint element_buffer;
+	glGenBuffers(1, &element_buffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_buffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, Ni*sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
+
+
+
 	//glEnableClientState(GL_VERTEX_ARRAY);
 	//glVertexPointer(4, GL_FLOAT, 0, P);
-	VertexAttribPointer("Vertex", 4, GL_FLOAT, GL_FALSE, 0, P);
+	//VertexAttribPointer("Vertex", 4, GL_FLOAT, GL_FALSE, 0, P);
 	//VertexAttribPointer("Vertex", 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), &V[0].position);
 
 	//glEnableClientState(GL_NORMAL_ARRAY);
 	//glNormalPointer(GL_FLOAT, 0, Normal);
-	VertexAttribPointer("Normal", 3, GL_FLOAT, GL_FALSE, 0, Normal);
+	//VertexAttribPointer("Normal", 3, GL_FLOAT, GL_FALSE, 0, Normal);
 	//VertexAttribPointer("Normal", 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), &V[0].normal);
 	
-	VertexAttribPointer("Tangent", 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), &V[0].tangent);
-	VertexAttribPointer("Bitangent", 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), &V[0].bitangent);
+	//VertexAttribPointer("Tangent", 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), &V[0].tangent);
+	//VertexAttribPointer("Bitangent", 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), &V[0].bitangent);
 
 	//glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	//glTexCoordPointer(2, GL_FLOAT, 0, TexCoord);
-	VertexAttribPointer("TexCoord", 2, GL_FLOAT, GL_FALSE, 0, TexCoord);
+	//VertexAttribPointer("TexCoord", 2, GL_FLOAT, GL_FALSE, 0, TexCoord);
 	//VertexAttribPointer("TexCoord", 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), &V[0].texCoord);
 }
 

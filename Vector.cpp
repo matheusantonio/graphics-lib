@@ -155,6 +155,10 @@ vec4 operator*(float a, vec4 v){
     return {a*v.x, a*v.y, a*v.z, a*v.w};
 }
 
+bool operator!=(vec4 u, vec4 v){
+    return (u.x!=v.x || u.y!=v.y || u.z!=v.z || u.w!=v.w);
+}
+
 // Conversão de vec4 para vec3
 vec3 vec4to3(vec4 u){
     return {u.x/u.w, u.y/u.w, u.z/u.w};

@@ -93,6 +93,8 @@ vec4 operator-(vec4 u, vec4 v);
 // multiplicação por escalar de vec4
 vec4 operator*(float a, vec4 v);
 
+bool operator!=(vec4 u, vec4 v);
+
 // Conversão de vec4 para vec3
 vec3 vec4to3(vec4 u);
 

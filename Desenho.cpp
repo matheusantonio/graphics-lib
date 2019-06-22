@@ -660,21 +660,32 @@ void draw_elements_line_loop(Image img, vec4* P, int* indices, int n, Color c){
     
 }
 
-int clip_triangle(Image img, vec4 PolC[3], Color C[3], vec4 n){
-
-/*
+int clip_triangle(Image img, vec4 PolC[3], Color Col[3], vec4 n){
     vec4 P[3][2];
-    for(int i=0;i<3;i++){
-        P[i][0] = {PolC[i].x, PolC[i].y, PolC[i].z, PolC[i].w};
-        if(i==2) P[i][1] = {PolC[0].x, PolC[0].y, PolC[0].z, PolC[0].w};
-        else P[i][1] = {PolC[i+1].x, PolC[i+1].y, PolC[i+1].z, PolC[i+1].w};
+    Color C[3];
+    vec4 Pextra;
+
+    // Copia Pin e Cin para P e C
+    for(int i=0;i<3;i++){     
+        P[i][0] = PolC[i];
+        if(i==2) P[i][1] = PolC[0];
+        else P[i][1] = PolC[i+1];
+        clipline(&P[i][0], &P[i][1], n);
+        C[i] = Col[i];
     }
 
     for(int i=0;i<3;i++){
-        clipline(&P[i][0], &P[i][1], n);
-    }*/
+        if(P[i][1] != P[i+1][0]){
+            // existe um novo triangulo
+        } else{
+
+        }
+    }
+
+
     
-      
+
+
 
 
     return 0;
@@ -699,9 +710,9 @@ void draw_triangle(Image img, vec4 Pin[3], Color Cin[3]){
         {0, 1, 0, 1},
         {0, -1, 0, 1},
     };
-    for(int i = 0; i < 6; i++)
-        if(clip_triangle(img, P, C, n[i]))
-            return;
+    for(int i = 0; i < 6; i++);
+        //if(clip_triangle(img, P, C, n[i]))
+            //return;
     
     vec3 P3[] = {
         toScreen(img, P[0]),
