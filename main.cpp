@@ -5,6 +5,7 @@
 #include "Image.h"
 #include "Complexos.h"
 #include "Matrix.h"
+#include "Surface.h"
 #include <math.h>
 
 float c0(float s){
@@ -212,7 +213,32 @@ int main()
     mat4 M3 = Projection*View*Model3;
     multMV4(M3, P3, N3, MP3);
 
-    draw_elements_triangles(Img, MP3, indices3, Ni3, C3);
+    //draw_elements_triangles(Img, MP3, indices3, Ni3, C3);
+
+    super S = lerObj("wavefront.obj");
+    
+    int N4 = S.numVertices;
+    int Ni4 = 3*S.numFaces;
+
+    vec4* P4;
+    P4 = getVertices(S);
+    int* indices4;
+    indices4 = getIndices(S);
+
+    vec4 MP4[N4];
+    mat4 Model4 = rotate_x(-0.2)*rotate_y(-0.1)*scale(1.5, 1.5, 1);
+
+    mat4 M4 = Projection*View*Model4;
+    multMV4(M4, P4, N4, MP4);
+
+    Color C4[N4];
+    for(int i=0;i<N4;i++){
+        C4[i] = c_blue();
+    }
+
+    draw_elements_triangles(Img, MP4, indices4, Ni4, C4);
+
+
 
     savePNG("figuras/testebarcocoons.png", Img);
 
