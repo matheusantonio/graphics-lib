@@ -1,4 +1,4 @@
-#version 130
+#version 330
 
 out vec3 v;
 out vec3 normal;

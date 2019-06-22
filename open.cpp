@@ -1,5 +1,5 @@
 #include <GL/glew.h>
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 #include "cguff.h"
 #include "Matrix.h"
 #include <cmath>
@@ -270,6 +270,8 @@ void init(){
 
 int main(int argc, char* argv[]){
 	glutInit(&argc, argv);
+	glutInitContextVersion(3, 3);
+	glutInitContextProfile(GLUT_CORE_PROFILE);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
 	int w = 400, h = 400;
 	glutInitWindowSize(w, h);
