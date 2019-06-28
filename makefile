@@ -2,4 +2,4 @@ glib : main.cpp Color.cpp Color.h Complexos.cpp Complexos.h Desenho.cpp Desenho.
 	g++ main.cpp Color.cpp Complexos.cpp Desenho.cpp Image.cpp Vector.cpp Quaternions.cpp Matrix.cpp Surface.cpp -o glib
 
 openglib: open.cpp Vector.cpp Color.cpp Matrix.cpp Quaternions.cpp
-	g++ -o openglib open.cpp Vector.cpp Color.cpp Matrix.cpp Quaternions.cpp -lglut -lGLU -lGL -lGLEW
+	g++ -o openglib open.cpp Vector.cpp Color.cpp Matrix.cpp Quaternions.cpp -lglut -lGLU -lGL -lGLEW -lassimp
