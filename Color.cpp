@@ -48,6 +48,14 @@ Color operator* (float u, Color A){
     return C;
 }
 
+Color operator+ (Color A, Color B){
+    Color C;
+    C.r = clamp(A.r + A.b);
+    C.g = clamp(A.g + B.g);
+    C.b = clamp(A.b + B.b);
+    return C;
+}
+
 // 
 //string str_color (Color a){
 //    return "{" + to_string(a.r) + "," + to_string(a.g) + "," + to_string(a.b) + "}";

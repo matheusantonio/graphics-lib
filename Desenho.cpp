@@ -554,6 +554,9 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
     }
     //cout << mx << ", " << my << endl;
 
+    //cout << "when drawning: " << xm << ", " << mx << endl;
+                    
+
     for(int x=mx; x<=xm; x++){
         for(int y=my; y<=ym; y++){
             float bari[3];
@@ -562,12 +565,14 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
                bari[1] >= 0 && bari[1] <= 1 &&
                bari[2] >= 0 && bari[2] <= 1){
                    Color c = intertri(bari, C[0], C[1], C[2]);
-                   //float *zb = zbuffer(img, x, y);
-                   float z = bari[0]*P[0].z + bari[1]*P[1].z + bari[2]*P[2].z;
-                   //cout << "Vou pintar: " << x << ", " << y << ", " << z << " : " << xm << "- " << ym << endl;
-                   //if(z>*zb){
-                       draw_pixel(img, x, y, c);
-                       //*zb = z;
+                   
+                    
+                    float *zb = zbuffer(img, x, y); 
+                    float z = bari[0]*P[0].z + bari[1]*P[1].z + bari[2]*P[2].z;
+                    //if(z>*zb){
+                        //cout << "Vou pintar: " << x << ", " << y << ", " << z << " : " << xm << "- " << ym << endl;
+                        draw_pixel(img, x, y, c);
+                        //*zb = z;
                    //}
                }
         }
@@ -710,16 +715,16 @@ void draw_triangle(Image img, vec4 Pin[3], Color Cin[3]){
         {0, 1, 0, 1},
         {0, -1, 0, 1},
     };
-    for(int i = 0; i < 6; i++);
+    //for(int i = 0; i < 6; i++);
         //if(clip_triangle(img, P, C, n[i]))
             //return;
     
     vec3 P3[] = {
-        toScreen(img, P[0]),
-        toScreen(img, P[1]),
-        toScreen(img, P[2])
+        toScreen(img, Pin[0]),
+        toScreen(img, Pin[1]),
+        toScreen(img, Pin[2])
     };
-    draw_triangle(img, P3, C);
+    draw_triangle(img, P3, Cin);
 }
 
 

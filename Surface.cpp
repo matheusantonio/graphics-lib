@@ -32,10 +32,11 @@ super lerObj(const char* filename){
     return S;
 }
 
-vec4* getVertices(super S){
+vec4* getVertices(super S, Color* Cin, Color* Cout){
     vec4* P = (vec4*)malloc(S.numVertices*sizeof(vec4));
     for(int i=0;i<S.numVertices;i++){
         P[i] = { S.vertices[i].x, S.vertices[i].y, S.vertices[i].z, 1};
+        Cout[i] = bilinear(S.vertices[i].x, S.vertices[i].y, Cin[0], Cin[1], Cin[2], Cin[3]);
     }
 
     return P;

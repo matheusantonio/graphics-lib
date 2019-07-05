@@ -1,21 +1,24 @@
 #version 330
 
 //layout(location=0) in vec4 Vertex;
-//layout(location=1) in vec3 Normal;
+//layout(location=1) in vec2 TexCoord;
+//layout(location=2) in vec3 Normal;
+//layout (location = 3) in vec3 Tangent;
+//layout (location = 4) in vec3 Bitangent;
 
 out vec3 v;
 out vec3 normal;
-//out vec3 tangent;
-//out vec3 bitangent;
+out vec3 tangent;
+out vec3 bitangent;
 out vec2 texCoord;
 //out mat3 NM;
-out vec4 vLightSpace;
+//out vec4 vLightSpace;
 
 in vec4 Vertex;
 in vec3 Normal;
 in vec3 Tangent;
 in vec3 Bitangent;
-in vec2 TexCoord;
+//in vec2 TexCoord;
 
 uniform mat4 Model;
 uniform mat4 View;
@@ -27,7 +30,7 @@ uniform mat4 LightSpaceMatrix;
 //uniform mat3 NormalMatrix;
 
 void main(){
-	texCoord = TexCoord;
+	//texCoord = TexCoord;
 
 	//v = vec3(ModelView*Vertex);
 	//normal = NormalMatrix*Normal;
@@ -39,11 +42,13 @@ void main(){
 	mat3 NormalMatrix = transpose(inverse(mat3(ModelView)));
 	mat4 MVP = Projection*ModelView;
 	v = vec3(ModelView*Vertex);
+	//texCoord = TexCoord;
 	normal = normalize(NormalMatrix*Normal);
-
+	//tangent = mat3(ModelView)*Tangent;
+	//bitangent = mat3(ModelView)*Bitangent;
 	//NM =  NormalMatrix;
 
-	vLightSpace = LightSpaceMatrix*Model*Vertex;
+	//vLightSpace = LightSpaceMatrix*Model*Vertex;
 
 	gl_Position = MVP*Vertex;
 } 

@@ -66,79 +66,41 @@ Vertex initSurface(mat4 Model){
     return s;
 }
 
-/*Vertex initCube(){
-    
-    Vertex cube;
-    
-    cube.N=8;
-    cube.Ni=12*3;
-
-    cube.P = (vec4*)malloc(cube.N*sizeof(vec4));
-    cube.P = {
-        {0, 0, 0, 1}, {2, 0, 0, 1}, {2, 1, 0, 1}, {0, 1, 0, 1},
-        {0, 0, 1, 1}, {2, 0, 1, 1}, {2, 1, 1, 1}, {0, 1, 1, 1},
-    };
-
-    cube.C = (Color*)malloc(cube.N*sizeof(Color));
-    cube.C = {
-        {165,42,42},
-        {255,140,0},
-        {255,255,0},
-        {139,69,19},
-        {160,82,45},
-        {210,105,30},
-        {222,184,135},
-        {240,230,140},
-    };
-    // Arestas do cubo
-    cube.indices = (int*)malloc(cube.Ni*sizeof(int));
-    cube.indices = {
-        0, 1, 4,
-        1, 4, 5,
-        1, 2, 5,
-        2, 5, 6,
-        3, 2, 7,
-        2, 7, 6,
-        0, 3, 4,
-        3, 4, 7,
-        4, 5, 7,
-        5, 6, 7,
-        0, 1, 3,
-        1, 2, 3,
-    };
-
-    cube.ModelMatrix = rotate_y(0.2)*rotate_x(0.1)*translate(-0.5,-0.5,-0.5);
-
-    
-    return cube;
-}*/
-
-float c0(float s){
-    return 2*s*s -s;
+//float c0(float s){
+vec3 c0(float s){
+    return {15*cos(s), 10*sin(0.1*s), 0.8*sin(6*s+2.5)};
+    //return -s*s+3;
 }
 
-float c1(float s){
-    return 4*s*s + s;
+//float c1(float s){
+vec3 c1(float s){
+    return {15*cos(s+0.2), 10*sin(0.1*s+1), -0.332917*sin(6*s+2.5)};
+    //return cos(s);
 }
 
-float d0(float t){
-    return cos(t);
+//float d0(float t){
+vec3 d0(float t){
+    return {15*cos(0.2*t), 10*sin(t), 0.478778*cos(2*t)};
+    //return -t*t-3;
 }
 
-float d1(float t){
-    return sin(t);
+//float d1(float t){
+vec3 d1(float t){
+    return {15*cos(0.2*t+1), 10*sin(t+0.1), 2*(1-t)*t+0.63879*cos(2*t)};
+    //return 2*t*t;
 }
 
-float Lc(float s, float t){
+vec3 Lc(float s, float t){
     return (1-t)*c0(s) + t*c1(s);
 }
 
-float Ld(float s, float t){
+vec3 Ld(float s, float t){
     return (1-s)*d0(t) + s*d1(t);
 }
 
-float b(float s, float t){
-    return c0(0)*(1-s)*(1-t) + c0(1)*s*(1-t) + c0(0)*(1-s)*t + c0(1)*s*t;
+//float b(float s, float t){
+vec3 b(float s, float t){
+    return (1-s)*(1-t)*c0(0) + s*(1-t)*c0(1) + (1-s)*t*c1(0) + s*t*c1(1);
 }
 
 float factorial(float n){
@@ -150,7 +112,7 @@ float factorial(float n){
 }
 
 float bni(int n, int i, float u){
-    return factorial(n)/(factorial(i)*factorial(n-i))*pow(u, i)*pow(1-u, n-i);
+    return (factorial(n)/(factorial(i)*factorial(n-i)))*pow(u, i)*pow(1-u, n-i);
 }
 
 vec4 bez(float u, float v, int n, int m, vec4 P[]){
@@ -164,7 +126,7 @@ vec4 bez(float u, float v, int n, int m, vec4 P[]){
     return res;
 }
 
-Vertex initSuper(const char* filename, mat4 Model){
+Vertex initSuper(const char* filename, mat4 Model, Color *C){
 
     super S = lerObj(filename);
     
@@ -173,14 +135,15 @@ Vertex initSuper(const char* filename, mat4 Model){
     V.Ni = 3*S.numFaces;
     
     //V.P = (vec4*)malloc(V.N*sizeof(vec4));
-    V.P = getVertices(S);
+
+    V.C = (Color*)malloc(V.N*sizeof(Color));
+    V.P = getVertices(S, C, V.C);
     //V.indices = (int*)malloc(V.Ni*sizeof(int));
     V.indices = getIndices(S);
     V.ModelMatrix = Model;
 
-    V.C = (Color*)malloc(V.N*sizeof(Color));
     for(int i=0;i<V.N;i++){
-        V.C[i] = {i*255/V.N, i*120/V.N, i*230/V.N};
+        //V.C[i] = {i*255/V.N, i*120/V.N, i*230/V.N};
         //V.C[i] = c_red();
     }
 
@@ -191,15 +154,13 @@ Vertex initCoons(mat4 Model){
     
     Vertex c;
 
-    int m=30, n=30;
+    int m=15, n=15;
     c.N = m*n;
-    int u0 = -5;
-    int u1 = 5;
-	int du = (u1-u0)/(m-1);
+    float u0 = -5, u1 = 5;
+	float du = (u1-u0)/(m-1);
 	
-	int v0 = -5;
-    int v1 = 5;
-	int dv = (v1-v0)/(n-1);
+	float v0 = -5, v1 = 5;
+	float dv = (v1-v0)/(n-1);
 
     c.P = (vec4*)malloc(c.N*sizeof(vec4));
     c.C = (Color*)malloc(c.N*sizeof(Color));
@@ -209,8 +170,9 @@ Vertex initCoons(mat4 Model){
             float u = u0 + i*du;
             float v = v0 + j*dv;
             int ij = i + j*m;
-            float uv = Lc(u, v) + Ld(u, v) - b(u, v);
-            c.P[ij] = {u, v, uv, 1};
+            vec3 uv = Lc(u, v) + Ld(u, v) - b(u, v);
+            c.P[ij] = {uv.x, uv.y, uv.z, 1};
+            //cout << c.P[ij].x << ", "<< c.P[ij].y << ", "<< c.P[ij].z << endl;
             //P3[ij] = bez(u, v, n3, m3, Pc);
             c.C[ij] = bilinear((float)i/m, (float)j/n, {0,0,0},{0,100,0},{34,139,34},{173,255,47});
         }
@@ -237,6 +199,38 @@ Vertex initCoons(mat4 Model){
     return c;
 }
 
+Vertex initBezier(mat4 Model, vec4 P[]){
+    
+    Vertex c;
+
+    int m = 20, n=20;
+    c.N = m*n;
+
+    float u0 = -5, u1 = 5;
+	float du = (u1-u0)/(m-1);
+	
+	float v0 = -5, v1 = 5;
+	float dv = (v1-v0)/(n-1);
+
+    c.P = (vec4*)malloc(c.N*sizeof(vec4));
+    c.C = (Color*)malloc(c.N*sizeof(Color));
+
+    for(int i =0;i<m;i++){
+        for(int j=0;j<n;j++){
+            float u = u0 + i*du;
+            float v = v0 + j*dv;
+            int ij = i + j*m;
+            //float uv = bez(i, j, 4, 4, P);
+            //c.P[ij] = {u, v, uv, 1};
+            c.P[ij] = bez(i, j, 4, 4, P);
+            c.C[ij] = bilinear((float)i/m, (float)j/n, {0,0,0},{0,100,0},{34,139,34},{173,255,47});
+        }
+    }
+
+
+
+}
+
 void desenha(Vertex* models, int nModels){
 
     mat4 View = lookAt({0,0,15}, {0,0,0}, {0,1,0});
@@ -253,10 +247,12 @@ void desenha(Vertex* models, int nModels){
             //cout << models[i].ModelMatrix.M[j][0] <<", " << models[i].ModelMatrix.M[j][1] <<", " << models[i].ModelMatrix.M[j][2] <<", " << models[i].ModelMatrix.M[j][3] << endl;
         }
 
-        for(int j =0;j<4;j++){
-            //cout << MP[i].x <<", " << MP[i].y <<", " << MP[i].z <<", " << MP[i].w << endl;
+        for(int j =0;j<models[i].N;j++){
+            //cout << MP[j].x/MP[j].w <<", " << MP[j].y/MP[j].w <<", " << MP[j].z/MP[j].w <<", " << MP[j].w << endl;
+            //cout << models[i].P[j].x <<", " << models[i].P[j].y <<", " << models[i].P[j].z <<", " << models[i].P[j].w << endl;
         }
-        
+
+        //cout << models[i].Ni << endl;
 
         draw_elements_triangles(Img, MP, models[i].indices, models[i].Ni, models[i].C);  
     }
@@ -271,14 +267,23 @@ int main()
     Img = newImage(500,500, true);
     initImage(Img, {0,191,255});
     
-    int nModels = 4;
+    int nModels = 2;
     Vertex *models = (Vertex*)malloc(nModels*sizeof(Vertex));
 
+    Color colorBoat[4] = {
+        {160,82,45},
+        {139,69,19},
+        {210,105,30},
+        {160,82,45}
+    };
+
     models[0] = initSurface(scale(1.6,1,1)*rotate_x(-0.5)*translate(0,-2.5,0));
-    models[1] = initCoons(loadIdentity());
+    //models[1] = initCoons(scale(0.2,0.2,0.2)*rotate_y(M_PI/4)*rotate_x(-0.2));
+    models[1] = initCoons(scale(0.05, 0.05, 0.05));
     //models[2] = initCube();
-    models[2] = initSuper("bunny.obj", scale(20, 20, 1)*rotate_x(-0.2)*rotate_y(-0.1)*translate(0, -0.2, 1));
-    models[3] = initSuper("teapot2.obj", scale(1, 1, 1)*rotate_x(-0.2)*rotate_y(-0.1));
+    //models[1] = initSuper("bunny.obj", scale(20, 20, 1)*rotate_x(-0.2)*rotate_y(-0.1)*translate(0, -0.2, 1));
+    //models[2] = initSuper("teapot2.obj", scale(1, 1, 1)*rotate_x(-0.2)*rotate_y(-0.1));
+    //models[1] = initSuper("untitled.obj", scale(0.5, 0.5, 0.5)*rotate_y(0.5)*rotate_x(0.2)*translate(0,-2,0), colorBoat);
 
     desenha(models, nModels);
 

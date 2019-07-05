@@ -25,6 +25,7 @@ bool operator== (Color a, Color b);
 
 Color operator* (float u, Color A);
 
+Color operator+ (Color A, Color B);
 // 
 //string str_color (Color a);
 

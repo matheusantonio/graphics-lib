@@ -9,6 +9,6 @@ struct super{
 
 super lerObj(const char* filename);
 
-vec4* getVertices(super S);
+vec4* getVertices(super S, Color* Cin, Color* Cout);
 
 int* getIndices(super S);

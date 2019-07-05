@@ -2,14 +2,14 @@
 
 in vec3 v;
 in vec3 normal;
-//in vec3 tangent;
-//in vec3 bitangent;
+in vec3 tangent;
+in vec3 bitangent;
 in vec2 texCoord;
 //in mat3 NM;
 in vec4 vLightSpace;
 
 //uniform sampler2D texture0;
-uniform sampler2D texture1;
+//uniform sampler2D texture1;
 
 //uniform sampler2D diffuse_map;
 //uniform sampler2D specular_map;
@@ -21,6 +21,15 @@ out vec4 FragColor;
 uniform vec4 material[3];
 uniform float shininess;
 uniform vec4 light[4];
+
+struct TextureMap{
+	sampler2D Tex;
+	bool hasTex;
+};
+
+uniform TextureMap diffuse_map;
+uniform TextureMap specular_map;
+uniform TextureMap normal_map;
 
 float calculateShadow(vec4 pos, float bias){
 	// perform perspective divide
@@ -147,8 +156,8 @@ void main(){
 	vec3 h = normalize(L + E);
 	vec4 specular = material[2]*light[2]*pow(max(0, dot(h, N)), shininess);
 
-	float bias = max(0.05*(1.0-dot(N, L)), 0.005);
-	float shadow = calculateShadow(vLightSpace, bias);
+	//float bias = max(0.05*(1.0-dot(N, L)), 0.005);
+	//float shadow = calculateShadow(vLightSpace, bias);
 	
 	//FragColor = ambient + (1-shadow)*(diffuse + specular);
 	FragColor = ambient + diffuse + specular;
