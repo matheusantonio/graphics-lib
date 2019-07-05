@@ -1,0 +1,10 @@
+# Blender MTL File: 'Boat'
+# Material Count: 2
+
+newmtl None
+Ns 0
+Ka 0.000000 0.000000 0.000000
+Kd 0.215, 0.098, 0.043
+Ks 0.0 0.0 0.0
+d 1
+illum 2
