@@ -3,3 +3,7 @@ glib : main.cpp Color.cpp Color.h Complexos.cpp Complexos.h Desenho.cpp Desenho.
 
 openglib: open.cpp Vector.cpp Color.cpp Matrix.cpp Quaternions.cpp Model.cpp cguff.cpp
 	g++ -o openglib open.cpp Vector.cpp Color.cpp Matrix.cpp Quaternions.cpp Model.cpp cguff.cpp -lglut -lGLU -lGL -lGLEW -lassimp
+
+
+openplus: openplus.cpp Vector.cpp Color.cpp Matrix.cpp Quaternions.cpp ModelPlus.cpp cguff.cpp
+	g++ -o plus openplus.cpp Vector.cpp Color.cpp Matrix.cpp Quaternions.cpp ModelPlus.cpp cguff.cpp -lglut -lGLU -lGL -lGLEW -lassimp

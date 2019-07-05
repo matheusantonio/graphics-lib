@@ -278,7 +278,8 @@ int main()
     };
 
     models[1] = initSurface(scale(1.6,1,1)*rotate_x(-1.3)*translate(0,-3,0));
-    models[0] = initCoons(rotate_x(-0.8)*rotate_y(M_PI)*rotate_z(M_PI)*translate(-17,-10,3));
+    //models[0] = initCoons(rotate_x(-0.8)*rotate_y(M_PI)*rotate_z(M_PI)*translate(-17,-10,3));
+    models[0] = initCoons(rotate_x(-0.8)*rotate_z(M_PI)*translate(-7,-5,3));
     //models[1] = initCoons(scale(0.05, 0.05, 0.05));
     //models[2] = initCube();
     //models[1] = initSuper("bunny.obj", scale(20, 20, 1)*rotate_x(-0.2)*rotate_y(-0.1)*translate(0, -0.2, 1));

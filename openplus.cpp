@@ -3,7 +3,7 @@
 #include <stdio.h>
 //#include "cguff.h"
 
-#include "Model.h"
+#include "ModelPlus.h"
 
 
 using namespace cguff;
@@ -13,7 +13,6 @@ using namespace cguff;
 Model boat;
 Model ocean;
 Model coons;
-Model bunny;
 
 // Controle da rotacao
 int last_x, last_y;
@@ -35,14 +34,11 @@ void desenha(){
 	setUniform("View", View);
 
 	glDepthMask(GL_FALSE);
-	//draw_model(coons, rotate_x(-0.8)*rotate_y(M_PI)*rotate_z(M_PI)*translate(-17,-10,3));
 	draw_model(coons, rotate_x(-0.8)*rotate_z(M_PI)*translate(-7,-5,3));
 	draw_model(ocean, scale(1.6,1,1)*rotate_x(-1.3)*translate(0,-3,0));
 	glDepthMask(GL_TRUE);
 
 	draw_model(boat, scale(0.5, 0.5, 0.5)*rotate_z(0.4)*rotate_y(0.5)*rotate_x(0.2)*translate(0,-1,0));
-	//draw_model(bunny, scale(10,10,10));
-	
 	
 	glutSwapBuffers();
 }
@@ -83,9 +79,9 @@ void init(){
 
 	initLight();
 	ocean = surface_model(30, 30);
-	boat = load_model("boat2.obj");
+	boat = load_model("boat.obj");
 	coons = coons_model(15, 15);
-	//bunny = load_model("bunny.obj");
+
 }
 
 int main(int argc, char* argv[]){
@@ -102,6 +98,3 @@ int main(int argc, char* argv[]){
 	init();
 	glutMainLoop();
 }
-
-
-
