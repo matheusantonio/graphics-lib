@@ -554,7 +554,7 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
     }
     //cout << mx << ", " << my << endl;
 
-    //cout << "when drawning: " << xm << ", " << mx << endl;
+    cout << "when drawning: " << xm << ", " << mx << endl;
                     
 
     for(int x=mx; x<=xm; x++){

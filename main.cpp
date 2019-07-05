@@ -156,10 +156,10 @@ Vertex initCoons(mat4 Model){
 
     int m=15, n=15;
     c.N = m*n;
-    float u0 = -5, u1 = 5;
+    float u0 = 0, u1 = 1;
 	float du = (u1-u0)/(m-1);
 	
-	float v0 = -5, v1 = 5;
+	float v0 = 0, v1 = 1;
 	float dv = (v1-v0)/(n-1);
 
     c.P = (vec4*)malloc(c.N*sizeof(vec4));
@@ -233,7 +233,7 @@ Vertex initBezier(mat4 Model, vec4 P[]){
 
 void desenha(Vertex* models, int nModels){
 
-    mat4 View = lookAt({0,0,15}, {0,0,0}, {0,1,0});
+    mat4 View = lookAt({0,0,10}, {0,0,0}, {0,1,0});
     mat4 Projection = perspective(50,(float)Img.width/Img.height, 1, 50);
 
     for(int i=0;i<nModels; i++){
@@ -264,10 +264,10 @@ void desenha(Vertex* models, int nModels){
 
 int main()
 {
-    Img = newImage(500,500, true);
+    Img = newImage(800,600, true);
     initImage(Img, {0,191,255});
     
-    int nModels = 2;
+    int nModels = 3;
     Vertex *models = (Vertex*)malloc(nModels*sizeof(Vertex));
 
     Color colorBoat[4] = {
@@ -277,13 +277,13 @@ int main()
         {160,82,45}
     };
 
-    models[0] = initSurface(scale(1.6,1,1)*rotate_x(-0.5)*translate(0,-2.5,0));
-    //models[1] = initCoons(scale(0.2,0.2,0.2)*rotate_y(M_PI/4)*rotate_x(-0.2));
-    models[1] = initCoons(scale(0.05, 0.05, 0.05));
+    models[1] = initSurface(scale(1.6,1,1)*rotate_x(-1.3)*translate(0,-3,0));
+    models[0] = initCoons(rotate_x(-0.8)*rotate_y(M_PI)*rotate_z(M_PI)*translate(-17,-10,3));
+    //models[1] = initCoons(scale(0.05, 0.05, 0.05));
     //models[2] = initCube();
     //models[1] = initSuper("bunny.obj", scale(20, 20, 1)*rotate_x(-0.2)*rotate_y(-0.1)*translate(0, -0.2, 1));
     //models[2] = initSuper("teapot2.obj", scale(1, 1, 1)*rotate_x(-0.2)*rotate_y(-0.1));
-    //models[1] = initSuper("untitled.obj", scale(0.5, 0.5, 0.5)*rotate_y(0.5)*rotate_x(0.2)*translate(0,-2,0), colorBoat);
+    models[2] = initSuper("untitled.obj", scale(0.5, 0.5, 0.5)*rotate_z(0.4)*rotate_y(0.5)*rotate_x(0.2)*translate(0,-1,0), colorBoat);
 
     desenha(models, nModels);
 

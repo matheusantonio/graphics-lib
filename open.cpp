@@ -12,6 +12,7 @@ using namespace cguff;
 
 Model boat;
 Model ocean;
+Model coons;
 
 // Controle da rotacao
 int last_x, last_y;
@@ -32,9 +33,14 @@ void desenha(){
 	setUniform("Projection", Projection);
 	setUniform("View", View);
 
-	draw_model(boat, scale(0.5, 0.5, 0.5)*rotate_y(0.5)*rotate_x(0.5)*translate(0,-1,0));
-	draw_model(ocean, scale(3,1,1)*rotate_x(-0.7)*translate(0,-2.5,0));
+	glDepthMask(GL_FALSE);
+	draw_model(coons, rotate_x(-0.8)*rotate_y(M_PI)*rotate_z(M_PI)*translate(-17,-10,3));
+	draw_model(ocean, scale(1.6,1,1)*rotate_x(-1.3)*translate(0,-3,0));
+	glDepthMask(GL_TRUE);
 
+	draw_model(boat, scale(0.5, 0.5, 0.5)*rotate_z(0.4)*rotate_y(0.5)*rotate_x(0.2)*translate(0,-1,0));
+	
+	
 	glutSwapBuffers();
 }
 
@@ -75,6 +81,7 @@ void init(){
 	initLight();
 	ocean = surface_model(30, 30);
 	boat = load_model("boat.obj");
+	coons = coons_model(15, 15);
 }
 
 int main(int argc, char* argv[]){
