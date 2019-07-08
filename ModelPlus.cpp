@@ -411,7 +411,6 @@ Mesh surface_mesh(int m, int n, Material mat, float s){
 	}
 
 	Mesh M = generateMesh(P, N, indices, Ni);
-	//Materia: M.mat = mat;
 	Material material;
 	material.ambient = {0.0,0.0,0.0};
 	material.diffuse = {0.043, 0.211, 0.278};

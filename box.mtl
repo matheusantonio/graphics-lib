@@ -1,0 +1,12 @@
+newmtl mat1
+	Ns 40
+	Ni 1.0
+	d 1.0
+	Tf 1 1 1
+	illum 2
+	Ka 0.3 0.3 0.3
+	Kd 0.9 0.9 0.9
+	Ks 1.0 1.0 1.0
+	map_Kd diffuse.png
+	map_Ks specular.png
+
