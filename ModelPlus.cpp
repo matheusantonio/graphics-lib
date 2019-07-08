@@ -93,10 +93,10 @@ void check_texture(std::string map_name, int texture, int texUnit){
 	if(texture != -1){
 		glActiveTexture(GL_TEXTURE0 + texUnit);
 		glBindTexture(GL_TEXTURE_2D, texture);
-		setUniform(map_name + ".Tex", texUnit);
-		setUniform(map_name + ".hasTex", 1);
+		setUniform(map_name, texUnit);
+		setUniform("has_" + map_name, 1);
 	}else
-		setUniform(map_name + ".hasTex", 0);
+		setUniform("has_" + map_name, 0);
 }
 
 float max(float a, float b){
@@ -370,10 +370,10 @@ Mesh surface_mesh(int m, int n, Material mat, float s){
 	int N = m*n;
 	Vertex P[N];
 
-	float u0 = -10, u1 = 10;
+	float u0 = -5, u1 = 5;
 	float du = (u1-u0)/(m-1);
 	
-	float v0 = -10, v1 = 10;
+	float v0 = -5, v1 = 5;
 	float dv = (v1-v0)/(n-1);
 
 	for(int i = 0; i < m; i++){
@@ -382,7 +382,7 @@ Mesh surface_mesh(int m, int n, Material mat, float s){
 			float v = v0 + j*dv;
 		
 			int ij = i + j*m;
-			P[ij].position = {u, v, cos(s)+sin(u*v/4)};
+			P[ij].position = {u, v, cos(s) + sin(u*v/4)};
 			
 			vec3 Su = {1, 0, cos(u*v/4)*v/4};
 			vec3 Sv = {0, 1, cos(u*v/4)*u/4};
@@ -411,6 +411,7 @@ Mesh surface_mesh(int m, int n, Material mat, float s){
 	}
 
 	Mesh M = generateMesh(P, N, indices, Ni);
+	//Materia: M.mat = mat;
 	Material material;
 	material.ambient = {0.0,0.0,0.0};
 	material.diffuse = {0.043, 0.211, 0.278};

@@ -370,10 +370,10 @@ Mesh surface_mesh(int m, int n, Material mat, float s){
 	int N = m*n;
 	Vertex P[N];
 
-	float u0 = -10, u1 = 10;
+	float u0 = -5, u1 = 5;
 	float du = (u1-u0)/(m-1);
 	
-	float v0 = -10, v1 = 10;
+	float v0 = -5, v1 = 5;
 	float dv = (v1-v0)/(n-1);
 
 	for(int i = 0; i < m; i++){
