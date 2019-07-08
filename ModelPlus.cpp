@@ -366,14 +366,14 @@ Model sphere_model(int nu, int nv, Material mat){
 	return M;
 }
 
-Mesh surface_mesh(int m, int n, Material mat){
+Mesh surface_mesh(int m, int n, Material mat, float s){
 	int N = m*n;
 	Vertex P[N];
 
-	float u0 = -5, u1 = 5;
+	float u0 = -10, u1 = 10;
 	float du = (u1-u0)/(m-1);
 	
-	float v0 = -5, v1 = 5;
+	float v0 = -10, v1 = 10;
 	float dv = (v1-v0)/(n-1);
 
 	for(int i = 0; i < m; i++){
@@ -382,7 +382,7 @@ Mesh surface_mesh(int m, int n, Material mat){
 			float v = v0 + j*dv;
 		
 			int ij = i + j*m;
-			P[ij].position = {u, v, sin(u*v/4)};
+			P[ij].position = {u, v, cos(s)+sin(u*v/4)};
 			
 			vec3 Su = {1, 0, cos(u*v/4)*v/4};
 			vec3 Sv = {0, 1, cos(u*v/4)*u/4};
@@ -424,9 +424,9 @@ Mesh surface_mesh(int m, int n, Material mat){
 	return M;
 }
 
-Model surface_model(int m, int n, Material mat){
+Model surface_model(int m, int n, float s, Material mat){
 	Model M;
-	M.meshes.push_back(surface_mesh(m, n, mat));
+	M.meshes.push_back(surface_mesh(m, n, mat, s));
 	M.ModelMatrix = loadIdentity();
 	return M;
 }

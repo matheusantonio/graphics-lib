@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
+#include <unistd.h>
 //#include "cguff.h"
 
 #include "ModelPlus.h"
@@ -16,6 +17,7 @@ Model coons;
 
 // Controle da rotacao
 int last_x, last_y;
+float s = 0;
 mat4 R = loadIdentity();
 
 
@@ -38,9 +40,17 @@ void desenha(){
 	draw_model(ocean, scale(1.6,1,1)*rotate_x(-1.3)*translate(0,-3,0));
 	glDepthMask(GL_TRUE);
 
-	draw_model(boat, scale(0.5, 0.5, 0.5)*rotate_z(0.4)*rotate_y(0.5)*rotate_x(0.2)*translate(0,-1,0));
-	
+	draw_model(boat, scale(0.5, 0.5, 0.5)*rotate_z(0.4)*rotate_y(0.5)*rotate_x(0.2)*translate(0,cos(s)-1,0));
+
 	glutSwapBuffers();
+	
+	s++;
+	ocean = surface_model(30, 30, s);
+
+	sleep(1);
+
+	glutPostRedisplay();
+	
 }
 
 void initLight(){
@@ -78,7 +88,7 @@ void init(){
 	glUseProgram(shaderProgram);
 
 	initLight();
-	ocean = surface_model(30, 30);
+	ocean = surface_model(30, 30, s);
 	boat = load_model("boat.obj");
 	coons = coons_model(15, 15);
 

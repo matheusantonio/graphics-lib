@@ -63,7 +63,7 @@ Mesh sphere_mesh(int nu, int nv,
 Model sphere_model(int nu, int nv, 
 	Material mat = standard_material());
 
-Model surface_model(int m, int n,
+Model surface_model(int m, int n, float s,
 	Material mat = standard_material());
 
 Model coons_model(int m, int n, 

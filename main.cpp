@@ -18,6 +18,7 @@ struct Vertex{
 };
 
 Image Img;
+float par=1;
 
 Vertex initSurface(mat4 Model){
 
@@ -38,7 +39,7 @@ Vertex initSurface(mat4 Model){
             float u = u0 + i*du;
             float v = v0 + j*dv;
             int ij = i + j*m;
-            s.P[ij] = {u, v, sin(u*v/4), 1};
+            s.P[ij] = {u, v, cos(par)+sin(u*v/4), 1};
             s.C[ij] = bilinear((float)i/m, (float)j/n, {32,178,170}, {30,144,255},{25,25,112}, {0,0,128});
         }
     }
@@ -257,38 +258,44 @@ void desenha(Vertex* models, int nModels){
         draw_elements_triangles(Img, MP, models[i].indices, models[i].Ni, models[i].C);  
     }
 
-    savePNG("figuras/testebarcocoons.png", Img);
+    char* filename = (char*)malloc(25*sizeof(char));
+    sprintf(filename, "figuras/scene%f.png", par);
+    savePNG(filename, Img);
 
 }
 
 
 int main()
 {
-    Img = newImage(800,600, true);
-    initImage(Img, {0,191,255});
-    
-    int nModels = 3;
-    Vertex *models = (Vertex*)malloc(nModels*sizeof(Vertex));
+    for(par=1;par<10;par++){
+        Img = newImage(800,600, true);
+        initImage(Img, {0,191,255});
+        
+        int nModels = 3;
+        Vertex *models = (Vertex*)malloc(nModels*sizeof(Vertex));
 
-    Color colorBoat[4] = {
-        {160,82,45},
-        {139,69,19},
-        {210,105,30},
-        {160,82,45}
-    };
+        Color colorBoat[4] = {
+            {160,82,45},
+            {139,69,19},
+            {210,105,30},
+            {160,82,45}
+        };
 
-    models[1] = initSurface(scale(1.6,1,1)*rotate_x(-1.3)*translate(0,-3,0));
-    //models[0] = initCoons(rotate_x(-0.8)*rotate_y(M_PI)*rotate_z(M_PI)*translate(-17,-10,3));
-    models[0] = initCoons(rotate_x(-0.8)*rotate_z(M_PI)*translate(-7,-5,3));
-    //models[1] = initCoons(scale(0.05, 0.05, 0.05));
-    //models[2] = initCube();
-    //models[1] = initSuper("bunny.obj", scale(20, 20, 1)*rotate_x(-0.2)*rotate_y(-0.1)*translate(0, -0.2, 1));
-    //models[2] = initSuper("teapot2.obj", scale(1, 1, 1)*rotate_x(-0.2)*rotate_y(-0.1));
-    models[2] = initSuper("untitled.obj", scale(0.5, 0.5, 0.5)*rotate_z(0.4)*rotate_y(0.5)*rotate_x(0.2)*translate(0,-1,0), colorBoat);
+        models[1] = initSurface(scale(1.6,1,1)*rotate_x(-1.3)*translate(0,-3,0));
+        //models[0] = initCoons(rotate_x(-0.8)*rotate_y(M_PI)*rotate_z(M_PI)*translate(-17,-10,3));
+        models[0] = initCoons(rotate_x(-0.8)*rotate_z(M_PI)*translate(-7,-5,3));
+        //models[1] = initCoons(scale(0.05, 0.05, 0.05));
+        //models[2] = initCube();
+        //models[1] = initSuper("bunny.obj", scale(20, 20, 1)*rotate_x(-0.2)*rotate_y(-0.1)*translate(0, -0.2, 1));
+        //models[2] = initSuper("teapot2.obj", scale(1, 1, 1)*rotate_x(-0.2)*rotate_y(-0.1));
+        models[2] = initSuper("untitled.obj", scale(0.5, 0.5, 0.5)*rotate_z(0.4)*rotate_y(0.5)*rotate_x(0.2)*translate(0,cos(par)+-1,0), colorBoat);
 
-    desenha(models, nModels);
+        desenha(models, nModels);
 
-    freeImage(Img);
+        freeImage(Img);
+
+
+    }
 
     return 0;
 }

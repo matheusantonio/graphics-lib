@@ -11,8 +11,8 @@ super lerObj(const char* filename){
 
 
     try{
-        fscanf(obj, "#v = %d\n", &S.numVertices);
-        fscanf(obj, "#f = %d\n", &S.numFaces);
+        fscanf(obj, "#v= %d\n", &S.numVertices);
+        fscanf(obj, "#f= %d\n", &S.numFaces);
     } catch(exception e){
         return S;
     }
