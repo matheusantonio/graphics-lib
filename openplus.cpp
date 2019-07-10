@@ -48,7 +48,7 @@ void desenha(){
 	float aspect = (float)w/(float)h;
 
 	mat4 Projection = scale(1, 1, -1)*perspective(50, aspect, 1, 50);
-	mat4 View = lookAt({0, 0, 10}, {0, 0, 0}, {0, 1, 0})*R;
+	mat4 View = lookAt({0, 0, 10}, {0, 0, 0}, {0, 1, 0});
 
 	
 
@@ -103,22 +103,6 @@ void initLight(){
 		 1.0, 1.0, 1.0, 0.0, // position
 	};
 	glUniform4fv(getLocation("light"),  4, light);
-}
-
-void mouse(int button, int state, int x, int y){
-	last_x = x;
-	last_y = y;
-}
-
-void mouseMotion(int x, int y){
-	int dx = x - last_x;
-	int dy = y - last_y;
-
-	R = rotate_y(dx*0.01)*rotate_x(dy*0.01)*R;
-
-	last_x = x;
-	last_y = y;
-	glutPostRedisplay();
 }
 
 void keyboard(unsigned char c, int x, int y){
@@ -182,8 +166,6 @@ int main(int argc, char* argv[]){
 	glutInitWindowSize(800, 600);
 	glutCreateWindow("janela");
 	glutDisplayFunc(desenha);
-	glutMouseFunc(mouse);
-	glutMotionFunc(mouseMotion);
 	glutKeyboardFunc(keyboard);
 
 

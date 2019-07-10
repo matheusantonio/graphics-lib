@@ -545,7 +545,9 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
 
     flip_image();
 
-    int mx=0, my=0, xm=0, ym=0;
+    int xm = P[0].x, ym = P[0].y;
+
+    int mx=0, my=0;
     for(int i=0;i<3;i++){
         if(P[i].x < mx) mx = P[i].x;
         if(P[i].x > xm) xm = P[i].x;
@@ -554,8 +556,7 @@ void draw_triangle(Image img, vec3 P[3], Color C[3]){
     }
     //cout << mx << ", " << my << endl;
 
-    cout << "when drawning: " << xm << ", " << mx << endl;
-                    
+    if(xm < 0 || mx > img.width) return;
 
     for(int x=mx; x<=xm; x++){
         for(int y=my; y<=ym; y++){
@@ -703,6 +704,7 @@ void draw_triangle(Image img, vec4 Pin[3], Color Cin[3]){
     
     // Copia Pin e Cin para P e C
     for(int i=0;i<3;i++){
+        if(Pin[i].w < 0.000001) return;
         P[i] = Pin[i];
         C[i] = Cin[i];
     }
