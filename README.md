@@ -1,6 +1,5 @@
 # graphics-lib
-
-Biblioteca para processamento gráfico para a disciplina de Computação Gráfica (2019.1)
+*Biblioteca para processamento gráfico para a disciplina de Computação Gráfica (2019.1)*
 
 A biblioteca stb_image_write é necessária para a execução (A  biblioteca stb_image foi usada para adicionar texturas e se encontra no mesmo link):
 
